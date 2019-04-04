@@ -1,0 +1,26 @@
+<todos>
+	for cpu graph add multiple plots, one for each core
+
+	add application icon
+
+	add a tray icon
+		to minimize window
+		to maximize window
+		to display tooltip with stats
+	add a tab for battery info
+		psutil.sensors_battery()
+	add a tab for sensors:
+		psutils.sensors_fans()
+		psutils.sensors_temperatures()
+	*add a tab for processes
+		#add functionality to organize process info by column
+		add ability to adjust process
+		#make process fields read only
+
+	add a tab for disk read and write monitoring, if possible 
+		subtab for info
+		subtab for graph monitor
+	add a tab for network info
+		subtab for info
+		subtab for graph monitor
+</todos>

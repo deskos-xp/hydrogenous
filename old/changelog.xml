@@ -1,0 +1,8 @@
+<changeLog>
+	added a default startup config utilizing json
+	added graph customization
+		line style
+		line color
+	added ability to change monitor graph background color
+	added ability to change graph gridline color (3.16.2019)
+</changeLog>

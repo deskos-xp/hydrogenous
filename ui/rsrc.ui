@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>rsrc</class>
+ <widget class="QMainWindow" name="rsrc">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>777</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Hydrogenous Resource Monitor</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="2">
+     <layout class="QGridLayout" name="gridLayout"/>
+    </item>
+    <item row="1" column="2">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="processing">
+       <attribute name="title">
+        <string>Processing</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <item row="0" column="0">
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>735</width>
+             <height>479</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_5">
+                <item row="1" column="0">
+                 <widget class="QGroupBox" name="swap_box">
+                  <property name="minimumSize">
+                   <size>
+                    <width>200</width>
+                    <height>200</height>
+                   </size>
+                  </property>
+                  <property name="title">
+                   <string>Swap</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_8">
+                   <item row="0" column="0">
+                    <layout class="QGridLayout" name="swap_percent"/>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QGroupBox" name="ram_box">
+                  <property name="minimumSize">
+                   <size>
+                    <width>200</width>
+                    <height>200</height>
+                   </size>
+                  </property>
+                  <property name="title">
+                   <string>Memory</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_10">
+                   <item row="0" column="0">
+                    <layout class="QGridLayout" name="ram_percent"/>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="0" column="1">
+               <widget class="QGroupBox" name="cpu_box">
+                <property name="minimumSize">
+                 <size>
+                  <width>200</width>
+                  <height>200</height>
+                 </size>
+                </property>
+                <property name="title">
+                 <string>CPU</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_9">
+                 <item row="0" column="0">
+                  <layout class="QGridLayout" name="cpu"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="processes">
+       <attribute name="title">
+        <string>Processes</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_17">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_16">
+          <item row="0" column="0">
+           <widget class="QTabWidget" name="tabWidget_4">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="all">
+             <attribute name="title">
+              <string>All</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_45">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_44">
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="deselect_all">
+                  <property name="text">
+                   <string>Deselect</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QTableView" name="tasks"/>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="disk">
+       <attribute name="title">
+        <string>Disk</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_25">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_24">
+          <item row="0" column="0">
+           <widget class="QTabWidget" name="disk_sub">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <widget class="QWidget" name="info">
+             <attribute name="title">
+              <string>Info.</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_33">
+              <item row="0" column="0">
+               <widget class="QScrollArea" name="scrollArea_4">
+                <property name="widgetResizable">
+                 <bool>true</bool>
+                </property>
+                <widget class="QWidget" name="scrollAreaWidgetContents_4">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>98</width>
+                   <height>28</height>
+                  </rect>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_30">
+                  <item row="0" column="0">
+                   <layout class="QGridLayout" name="gridLayout_26"/>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="monitor">
+             <attribute name="title">
+              <string>Monitor</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_31">
+              <item row="0" column="0">
+               <widget class="QScrollArea" name="scrollArea_3">
+                <property name="widgetResizable">
+                 <bool>true</bool>
+                </property>
+                <widget class="QWidget" name="scrollAreaWidgetContents_3">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>98</width>
+                   <height>28</height>
+                  </rect>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_39">
+                  <item row="0" column="0">
+                   <layout class="QGridLayout" name="disk_monitor"/>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="network">
+       <attribute name="title">
+        <string>Network</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_23">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_22">
+          <item row="0" column="0">
+           <widget class="QTabWidget" name="net_sub">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <widget class="QWidget" name="info">
+             <attribute name="title">
+              <string>Info.</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_29">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_28"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="monitor">
+             <attribute name="title">
+              <string>Monitor</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_27">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="network_monitor">
+                <item row="0" column="0">
+                 <widget class="QScrollArea" name="scrollArea_2">
+                  <property name="widgetResizable">
+                   <bool>true</bool>
+                  </property>
+                  <widget class="QWidget" name="scrollAreaWidgetContents_2">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>98</width>
+                     <height>28</height>
+                    </rect>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_38">
+                    <item row="0" column="0">
+                     <layout class="QGridLayout" name="net"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="battery">
+       <attribute name="title">
+        <string>Battery</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_13">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_12">
+          <item row="0" column="0">
+           <widget class="QTabWidget" name="battery_tabs">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="info">
+             <attribute name="title">
+              <string>Info.</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_35">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_34"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="monitor">
+             <attribute name="title">
+              <string>Monitor</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_19">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_18"/>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="sensors">
+       <attribute name="title">
+        <string>Sensors</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_15">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_14">
+          <item row="0" column="0">
+           <widget class="QTabWidget" name="sensors_tabs">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <widget class="QWidget" name="info">
+             <attribute name="title">
+              <string>Info.</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_37">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_36"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="monitor">
+             <attribute name="title">
+              <string>Monitor</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_21">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_20"/>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="settings">
+       <attribute name="title">
+        <string>Settings</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_11">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="2" column="0">
+           <widget class="QPushButton" name="intervalSet">
+            <property name="text">
+             <string>Set</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLineEdit" name="lineColor">
+            <property name="maximumSize">
+             <size>
+              <width>125</width>
+              <height>16777215</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Interval</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="8" column="0">
+           <widget class="QPushButton" name="setLineColor">
+            <property name="text">
+             <string>Set</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QLineEdit" name="facecolor">
+            <property name="maximumSize">
+             <size>
+              <width>125</width>
+              <height>16777215</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="0">
+           <widget class="QPushButton" name="select_facecolor">
+            <property name="text">
+             <string>Select</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Background Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Graph Size</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Line Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QPushButton" name="setGraphSize">
+            <property name="text">
+             <string>Set</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QSpinBox" name="graphSize">
+            <property name="maximum">
+             <number>5000</number>
+            </property>
+            <property name="singleStep">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>25</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QSpinBox" name="interval">
+            <property name="maximum">
+             <number>1000000177</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>2000</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>777</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionQuit"/>
+   </widget>
+   <addaction name="menu_File"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

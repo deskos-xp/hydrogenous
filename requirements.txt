@@ -1,0 +1,4 @@
+pyqtgraph
+pyqt5
+engineering_notation
+hurry.filesize

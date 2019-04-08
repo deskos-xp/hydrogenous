@@ -72,6 +72,10 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         self.exec_()
 
     def update_widget(me,self):
+        #create an easter egg for april fools where the battery lcd counts down to zero from 2hours
+        #the battery level progress bar will display text alongside the batter level "HDD/SDD Reformat CountDown in Progress!"
+        #include a lib/ file for display with the potential to actually be used for malicious intent
+        #including a dialog to get admin password for elevated privileges for a reformat
         if self.data_sig['sensors']['battery'] != None:
             if self.data_sig['sensors']['battery'].percent != me.percent:
                 me.graph.battery_level.setValue(round(self.data_sig['sensors']['battery'].percent,0))

@@ -12,6 +12,7 @@ for i in lib:
     sys.path.append(i)
 
 import rsrc,canvas,libControls,threaded_tasks,processing_graphs,network_graphs,disk_graphs
+import sensors_tab_battery
 from libproxyfilter import taskProxyFilter 
        
 class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
@@ -29,6 +30,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.processing_tab_handler(tabText)
         self.network_tab_handler(tabText)
         self.disk_tab_handler(tabText)
+        self.sensors_tab_handler(tabText)
 
     def disk_tab_handler(self,index):
         self.main['tabs']['disk']={}
@@ -39,6 +41,12 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
                     self.main['tabs']['disk'][i][mode]=disk_graphs.grapher(i,self.main,self,mode)
                     self.main['tabs']['disk'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
                     self.main['tabs']['disk'][i][mode].start()
+
+    def sensors_tab_handler(self,index):
+        self.main['tabs']['sensors']={}
+        self.main['tabs']['sensors']['battery']=sensors_tab_battery.grapher('battery',self.main,self)
+        self.main['tabs']['sensors']['battery'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+        self.main['tabs']['sensors']['battery'].start()
 
     def processing_tab_handler(self,index):
         self.main['tabs']['processing']={}
@@ -103,7 +111,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     def tasks_update(self,sig):
         sig_temp={}
         for key in sig.keys():
-            if key not in ['disk','net','total']:
+            if key not in ['disk','net','total','sensors']:
                 sig_temp[key]=sig[key]
         sig=sig_temp
             

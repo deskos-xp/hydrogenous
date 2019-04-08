@@ -21,7 +21,7 @@
     <item row="1" column="2">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="processing">
        <attribute name="title">
@@ -38,8 +38,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>735</width>
-             <height>479</height>
+             <width>428</width>
+             <height>428</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
@@ -236,7 +236,7 @@
           <item row="0" column="0">
            <widget class="QTabWidget" name="net_sub">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="info">
              <attribute name="title">
@@ -287,44 +287,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="battery">
-       <attribute name="title">
-        <string>Battery</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_13">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_12">
-          <item row="0" column="0">
-           <widget class="QTabWidget" name="battery_tabs">
-            <property name="currentIndex">
-             <number>0</number>
-            </property>
-            <widget class="QWidget" name="info">
-             <attribute name="title">
-              <string>Info.</string>
-             </attribute>
-             <layout class="QGridLayout" name="gridLayout_35">
-              <item row="0" column="0">
-               <layout class="QGridLayout" name="gridLayout_34"/>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="monitor">
-             <attribute name="title">
-              <string>Monitor</string>
-             </attribute>
-             <layout class="QGridLayout" name="gridLayout_19">
-              <item row="0" column="0">
-               <layout class="QGridLayout" name="gridLayout_18"/>
-              </item>
-             </layout>
-            </widget>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="sensors">
        <attribute name="title">
         <string>Sensors</string>
@@ -335,25 +297,104 @@
           <item row="0" column="0">
            <widget class="QTabWidget" name="sensors_tabs">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
-            <widget class="QWidget" name="info">
+            <widget class="QWidget" name="battery_sub">
              <attribute name="title">
-              <string>Info.</string>
+              <string>Battery</string>
              </attribute>
              <layout class="QGridLayout" name="gridLayout_37">
               <item row="0" column="0">
-               <layout class="QGridLayout" name="gridLayout_36"/>
+               <layout class="QGridLayout" name="battery_grid_t">
+                <item row="0" column="0">
+                 <widget class="QScrollArea" name="scrollArea_7">
+                  <property name="widgetResizable">
+                   <bool>true</bool>
+                  </property>
+                  <widget class="QWidget" name="scrollAreaWidgetContents_7">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>709</width>
+                     <height>426</height>
+                    </rect>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_34">
+                    <item row="0" column="0">
+                     <layout class="QGridLayout" name="battery_grid"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="monitor">
+            <widget class="QWidget" name="temperatures_sub">
              <attribute name="title">
-              <string>Monitor</string>
+              <string>Temp</string>
              </attribute>
-             <layout class="QGridLayout" name="gridLayout_21">
+             <layout class="QGridLayout" name="gridLayout_20">
               <item row="0" column="0">
-               <layout class="QGridLayout" name="gridLayout_20"/>
+               <layout class="QGridLayout" name="gridLayout_18">
+                <item row="0" column="0">
+                 <widget class="QScrollArea" name="scrollArea_6">
+                  <property name="widgetResizable">
+                   <bool>true</bool>
+                  </property>
+                  <widget class="QWidget" name="scrollAreaWidgetContents_6">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>98</width>
+                     <height>28</height>
+                    </rect>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_32">
+                    <item row="0" column="0">
+                     <layout class="QGridLayout" name="temperature_grid"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="fans_sub">
+             <attribute name="title">
+              <string>Fans</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_13">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_12">
+                <item row="0" column="0">
+                 <widget class="QScrollArea" name="scrollArea_5">
+                  <property name="widgetResizable">
+                   <bool>true</bool>
+                  </property>
+                  <widget class="QWidget" name="scrollAreaWidgetContents_5">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>98</width>
+                     <height>28</height>
+                    </rect>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_19">
+                    <item row="0" column="0">
+                     <layout class="QGridLayout" name="fans_grid"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </widget>

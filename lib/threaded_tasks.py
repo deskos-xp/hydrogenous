@@ -25,8 +25,6 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
         self.timer.moveToThread(self)
         self.timer.timeout.connect(lambda: self.updateData(self.parent,k=self.name))
 
-
-
     def run(self):
         try:
             self.timer.start(self.main['interval'])
@@ -49,7 +47,8 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
         mod=me.tasks_collection(self,mod)
         mod=me.net_collection(self,mod)
         mod=me.disk_collection(self,mod)
-        
+        mod=me.sensors_collection(self,mod)
+
         #print(mod['disk']['speed']['sda3'])
         me.sig.emit(mod)       
 
@@ -73,6 +72,25 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
                 'swap_percent':psutil.swap_memory().percent,
                 'swap_bytes':psutil.swap_memory().used,
                 }
+        return mod
+        
+    def sensors_collection(me,self,mod):
+        mod['sensors']={}
+        mod=me.sensors_fans(self,mod) 
+        mod=me.sensors_battery(self,mod)
+        mod=me.sensors_temperatures(self,mod)
+        return mod
+
+    def sensors_fans(me,self,mod):
+        mod['sensors']['fans']=psutil.sensors_fans()
+        return mod
+
+    def sensors_battery(me,self,mod):
+        mod['sensors']['battery']=psutil.sensors_battery()
+        return mod
+
+    def sensors_temperatures(me,self,mod):
+        mod['sensors']['temp']=psutil.sensors_temperatures()
         return mod
 
     def net_collection(me,self,mod):

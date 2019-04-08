@@ -2,7 +2,8 @@ from PyQt5 import QtWidgets,QtGui,QtCore
 import os,sys,json
 import psutil,copy
 import engineering_notation as en
-from hurry.filesize import si,size,iec
+#from hurry.filesize import si,size,iec
+import hurry.filesize
 lib=('lib','lib_widget')
 for i in lib:
     sys.path.append(i)
@@ -127,7 +128,30 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         me.sig.emit()
         
     def update_titles(me,self):
-        me.box.setTitle('{} {}%'.format(me.name.upper(),str(self.data_sig['total'][me.name])))
+        if me.name in ['ram_percent','swap_percent']:
+            if me.name == 'ram_percent':
+                val=psutil.virtual_memory().used
+            if me.name == 'swap_percent':
+                val=psutil.swap_memory().used
+            me.box.setTitle(
+                '{} {}% - {}'.format(
+                        me.name.upper(),
+                        str(self.data_sig['total'][me.name]),
+                        hurry.filesize.size(
+                        val,
+                        system=hurry.filesize.iec
+                    )
+                )
+            ) 
+        elif me.name == 'cpu':
+            me.box.setTitle(
+                '{} {}% - {}'.format(
+                        me.name.upper(),
+                        str(self.data_sig['total'][me.name]),
+                        psutil.cpu_count(),
+                )
+            )
+
 
     def updateData(me,self,k=None,noStatPrint=False):
         if 'total' in self.data_sig.keys():

@@ -3,11 +3,7 @@ import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore 
- 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt 
-import matplotlib as mpl
+
 import gc
 import random
 import pyqtgraph as pg
@@ -25,7 +21,7 @@ class PlotCanvas():
         self.GRAPH.showGrid(True,True)
         #print([i for i in dir(self.GRAPH.items)])
         #allow zooming, need to move to config
-        self.GRAPH.setMouseEnabled(x=True,y=True)
+        self.GRAPH.setMouseEnabled(x=False,y=False)
         self.GRAPH.setLimits(yMax=ylim,yMin=0,xMax=len(data),xMin=0)
 
         self.graph=QtWidgets.QFrame(parent)

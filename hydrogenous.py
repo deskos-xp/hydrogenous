@@ -12,7 +12,7 @@ for i in lib:
     sys.path.append(i)
 
 import rsrc,canvas,libControls,threaded_tasks,processing_graphs,network_graphs,disk_graphs
-import sensors_tab_battery
+import sensors_tab_battery,sensors_tab_temperatures
 from libproxyfilter import taskProxyFilter 
        
 class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
@@ -47,6 +47,10 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.main['tabs']['sensors']['battery']=sensors_tab_battery.grapher('battery',self.main,self)
         self.main['tabs']['sensors']['battery'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
         self.main['tabs']['sensors']['battery'].start()
+        
+        self.main['tabs']['sensors']['temperatures']=sensors_tab_temperatures.grapher('temperatures',self.main,self)
+        self.main['tabs']['sensors']['temperatures'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+        self.main['tabs']['sensors']['temperatures'].start()
 
     def processing_tab_handler(self,index):
         self.main['tabs']['processing']={}

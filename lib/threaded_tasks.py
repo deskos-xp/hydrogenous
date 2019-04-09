@@ -58,13 +58,15 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
             name_list=[i.name(),]
             if cmd != '':
                 name_list.append(cmd)
-            mod[str(i.pid)]={
-                            'name':' | '.join(name_list),
-                            'pid':i.pid,
-                            'user':i.username(),
-                            'cpu':float(round(i.cpu_percent()/psutil.cpu_count(),2)),
-                            'ram':size(i.memory_info().rss,system=iec),
-                        }
+            if psutil.pid_exists(i.pid):
+                mod[str(i.pid)]={
+                                'name':' | '.join(name_list),
+                                'pid':i.pid,
+                                'user':i.username(),
+                                'cpu':float(round(i.cpu_percent()/psutil.cpu_count(),2)),
+                                'ram':size(i.memory_info().rss,system=iec),
+                            }
+            
         mod['total']={
                 'cpu':psutil.cpu_percent(),
                 'ram_bytes':psutil.virtual_memory().used,
@@ -90,7 +92,7 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
         return mod
 
     def sensors_temperatures(me,self,mod):
-        mod['sensors']['temp']=psutil.sensors_temperatures()
+        mod['sensors']['temperatures']=psutil.sensors_temperatures()
         return mod
 
     def net_collection(me,self,mod):

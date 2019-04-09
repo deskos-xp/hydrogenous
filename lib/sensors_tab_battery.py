@@ -93,7 +93,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                 else:
                     me.graph.plugged_in.setPixmap(me.battery_icon)
 
-            print(self.data_sig['sensors']['battery'])
+            #print(self.data_sig['sensors']['battery'])
             me.percent=self.data_sig['sensors']['battery'].percent
             me.secsleft=self.data_sig['sensors']['battery'].secsleft
             me.power_plugged=self.data_sig['sensors']['battery'].power_plugged

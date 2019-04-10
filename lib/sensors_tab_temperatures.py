@@ -79,7 +79,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                 tabIndex=self.tabWidget.currentIndex()
                 tabText=self.tabWidget.tabText(tabIndex)
                 if self.tabWidget.tabText(self.tabWidget.currentIndex()).lower() == 'sensors':
-                    if self.sensors_tabs.tabText(self.sensors_tabs.currentIndex()).lower() == 'temp':
+                    if self.sensors_tabs.tabText(self.sensors_tabs.currentIndex()).lower() == 'temperatures':
                         me.update_widget(self)
             else:
                 print('missing data key "temperatures"')

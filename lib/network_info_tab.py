@@ -47,6 +47,11 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         self.exec_()
 
     def update_info(me,self):
+        #iterate through the rows for the address
+        #if the address does not exist in data_sig
+        #drop the row
+        #if the address does exist
+        #check if any fields have changed and update them if necessary        
         print(self.data_sig['net']['addrs'][me.name])
 
     def updateData(me,self,k=None,noStatPrint=False):

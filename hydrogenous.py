@@ -6,13 +6,14 @@ from PyQt5.QtCore import Qt
 import os,sys,engineering_notation,json
 import hurry.filesize
 import psutil,copy
+import platform
 
 lib=('lib','lib_widget')
 for i in lib:
     sys.path.append(i)
 
 import rsrc,canvas,libControls,threaded_tasks,processing_graphs,network_graphs,disk_graphs
-import sensors_tab_battery,sensors_tab_temperatures
+import sensors_tab_battery,sensors_tab_temperatures,network_info_tab
 from libproxyfilter import taskProxyFilter 
        
 class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
@@ -43,14 +44,15 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
                     self.main['tabs']['disk'][i][mode].start()
 
     def sensors_tab_handler(self,index):
-        self.main['tabs']['sensors']={}
-        self.main['tabs']['sensors']['battery']=sensors_tab_battery.grapher('battery',self.main,self)
-        self.main['tabs']['sensors']['battery'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
-        self.main['tabs']['sensors']['battery'].start()
+        if platform.uname().system == 'Linux':
+            self.main['tabs']['sensors']={}
+            self.main['tabs']['sensors']['battery']=sensors_tab_battery.grapher('battery',self.main,self)
+            self.main['tabs']['sensors']['battery'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+            self.main['tabs']['sensors']['battery'].start()
         
-        self.main['tabs']['sensors']['temperatures']=sensors_tab_temperatures.grapher('temperatures',self.main,self)
-        self.main['tabs']['sensors']['temperatures'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
-        self.main['tabs']['sensors']['temperatures'].start()
+            self.main['tabs']['sensors']['temperatures']=sensors_tab_temperatures.grapher('temperatures',self.main,self)
+            self.main['tabs']['sensors']['temperatures'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+            self.main['tabs']['sensors']['temperatures'].start()
 
     def processing_tab_handler(self,index):
         self.main['tabs']['processing']={}
@@ -71,6 +73,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
 
     def network_tab_handler(self,index):
         self.main['tabs']['network']={}
+        self.main['tabs']['network_info']={}
         if 'net' in self.data_sig.keys():
             print(self.data_sig['net'])
             #create threads based on interfaces detected
@@ -82,6 +85,11 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
 
 
                 self.main['tabs']['network'][i][mode].start()
+
+        for i in psutil.net_if_addrs().keys():
+            self.main['tabs']['network_info'][i]=network_info_tab.grapher(i,self.main,self)
+            self.main['tabs']['network_info'][i].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+            self.main['tabs']['network_info'][i].start()
 
     def tasks_tab_handler(self):
         currentTab=self.tabWidget.tabText(self.tabWidget.currentIndex())

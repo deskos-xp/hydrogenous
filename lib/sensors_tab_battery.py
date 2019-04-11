@@ -97,6 +97,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
             me.percent=self.data_sig['sensors']['battery'].percent
             me.secsleft=self.data_sig['sensors']['battery'].secsleft
             me.power_plugged=self.data_sig['sensors']['battery'].power_plugged
+        me.sig.emit()
 
     def updateData(me,self,k=None,noStatPrint=False):
         if 'sensors' in self.data_sig.keys():

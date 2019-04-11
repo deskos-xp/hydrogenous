@@ -88,7 +88,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
 
         for i in psutil.net_if_addrs().keys():
             self.main['tabs']['network_info'][i]=network_info_tab.grapher(i,self.main,self)
-            self.main['tabs']['network_info'][i].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+            #self.main['tabs']['network_info'][i].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['network_info'][i].start()
 
     def tasks_tab_handler(self):

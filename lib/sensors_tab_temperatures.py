@@ -85,3 +85,4 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                 print('missing data key "temperatures"')
         else:
             print('missing data key "sensors"')
+        me.sig.emit()

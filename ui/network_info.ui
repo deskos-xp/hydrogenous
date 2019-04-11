@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
+    <width>612</width>
     <height>336</height>
    </rect>
   </property>
@@ -41,9 +41,41 @@
                  <height>250</height>
                 </size>
                </property>
+               <property name="sizeAdjustPolicy">
+                <enum>QAbstractScrollArea::AdjustToContents</enum>
+               </property>
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <property name="dragEnabled">
+                <bool>true</bool>
+               </property>
+               <property name="dragDropOverwriteMode">
+                <bool>false</bool>
+               </property>
+               <property name="alternatingRowColors">
+                <bool>true</bool>
+               </property>
+               <property name="selectionMode">
+                <enum>QAbstractItemView::SingleSelection</enum>
+               </property>
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectItems</enum>
+               </property>
+               <attribute name="horizontalHeaderMinimumSectionSize">
+                <number>40</number>
+               </attribute>
+               <attribute name="verticalHeaderMinimumSectionSize">
+                <number>32</number>
+               </attribute>
                <column>
                 <property name="text">
                  <string>family</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>address</string>
                 </property>
                </column>
                <column>

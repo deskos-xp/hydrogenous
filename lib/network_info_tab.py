@@ -31,7 +31,34 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         #prefill rows of qtablewidget with data
         #reference document from stack over flow
         #https://stackoverflow.com/questions/40815730/how-to-add-and-retrieve-items-to-and-from-qtablewidget-using-pyqt5?rq=1
+        #rows=me.tool.tableWidget.rowCount()
+        #me.tool.tableWidget.insertRow(rows)
+        me.setup=False
         me.gridWidget(parent)
+
+
+    def setupWidget(me,self):
+
+        #me.tool.tableWidget.clear()
+        me.tool.tableWidget.clearContents()
+        me.tool.tableWidget.setRowCount(0)
+        for num,i in enumerate(self.data_sig['net']['addrs'][me.name]):
+            me.tool.tableWidget.insertRow(num)
+            items=[]
+            for x in i:
+                if type(x) != type(str()) and x != None:
+                    try:
+                        x=x.name
+                    except Exception as e:
+                        x=None
+                        print(e)
+                items.append(QtWidgets.QTableWidgetItem(x))
+            for num2,x in enumerate(items):
+                me.tool.tableWidget.setItem(num,num2,x)
+                header = me.tool.tableWidget.horizontalHeader()       
+                header.setSectionResizeMode(num2, QtWidgets.QHeaderView.Stretch)
+        me.setup=True
+
         
     def gridWidget(me,self):
         currentRows=self.net_info_grid.rowCount()
@@ -52,7 +79,31 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         #drop the row
         #if the address does exist
         #check if any fields have changed and update them if necessary        
-        print(self.data_sig['net']['addrs'][me.name])
+        #print(self.data_sig['net']['addrs'][me.name])
+        table=me.tool.tableWidget
+        rows=table.rowCount()
+        columns=table.columnCount()
+        addrs=[i.address for i in self.data_sig['net']['addrs'][me.name]]
+        col=1
+        for i in range(rows):
+            rowD=self.data_sig['net']['addrs'][me.name]
+            if len(rowD) == rows:
+                rowD=rowD[i]
+                item=table.item(i,col)
+                found=item.text()
+                counter=0
+                if found in rowD.address:
+                    row=item.row()
+                    col=item.column()
+                    #print(rowD.address,row,col)
+                    counter+=1
+                    #print(found,rowD.address)
+                else:
+                    me.setupWidget(self)
+            else:
+                me.setupWidget(self)
+            
+        me.sig.emit()
 
     def updateData(me,self,k=None,noStatPrint=False):
         if 'net' in self.data_sig.keys():
@@ -61,6 +112,9 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
 
             if tabText.lower() == 'network':
                 if self.net_sub.tabText(self.net_sub.currentIndex()).lower() == 'info.':
-                    me.update_info(self)
+                    if me.setup == False:
+                        me.setupWidget(self)
+                    else:
+                        me.update_info(self)
         else:
             print('missing data key "net"')

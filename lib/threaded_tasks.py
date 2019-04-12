@@ -50,7 +50,7 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
                 if i != 'default':
                     for x in gt[i]:
                         jade=[ni.address_families[i],]
-                        jade.extend([z for z in x if z not in ifaces])
+                        jade.extend([z for z in x])
                         gateways[iface][ni.address_families[i]]=jade                
         mod['net']['gateways']=gateways
         print(mod['net']['gateways'])

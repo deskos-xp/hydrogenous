@@ -54,8 +54,9 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                 items.append(QtWidgets.QTableWidgetItem(x))
             for num2,x in enumerate(items):
                 me.tool.tableWidget.setItem(num,num2,x)
-                header = me.tool.tableWidget.horizontalHeader()       
-                header.setSectionResizeMode(num2, QtWidgets.QHeaderView.Stretch)
+                #header = me.tool.tableWidget.horizontalHeader()       
+                #header.setSectionResizeMode(num2, QtWidgets.QHeaderView.Stretch)
+        
         me.setup=True      
 
     def gridWidget(me,self):

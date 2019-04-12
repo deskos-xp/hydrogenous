@@ -35,31 +35,32 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         #rows=me.tool.tableWidget.rowCount()
         #me.tool.tableWidget.insertRow(rows)
         me.setup=False
+        me.setupWidget(parent)
         me.gridWidget(parent)
+        
 
     def setupWidget(me,self): 
-        pass
-        '''
+        #this line clears header text as well, do not use it
         #me.tool.tableWidget.clear()
         me.tool.tableWidget.clearContents()
         me.tool.tableWidget.setRowCount(0)
-        for num,i in enumerate(self.data_sig['net']['addrs'][me.name]):
-            me.tool.tableWidget.insertRow(num)
-            items=[]
-            for x in i:
-                if type(x) != type(str()) and x != None:
-                    try:
-                        x=x.name
-                    except Exception as e:
-                        x=None
-                        print(e)
-                items.append(QtWidgets.QTableWidgetItem(x))
-            for num2,x in enumerate(items):
-                me.tool.tableWidget.setItem(num,num2,x)
-                header = me.tool.tableWidget.horizontalHeader()       
-                header.setSectionResizeMode(num2, QtWidgets.QHeaderView.Stretch)
+        if 'net' in self.data_sig.keys(): 
+            local=self.data_sig['net']['gateways']
+            counter=0
+            for family in local.keys():
+                for subElements in local[family]:
+                    me.tool.tableWidget.insertRow(counter)
+                    items=[]
+                    items.append(QtWidgets.QTableWidgetItem(family))
+                    for i in subElements:
+                        items.append(QtWidgets.QTableWidgetItem(i))
+                    print(family,subElements,items) 
+                    for col,i in enumerate(items):
+                        me.tool.tableWidget.setItem(counter,col,i)
+                    counter+=1
+               
         me.setup=True      
-        '''
+        
     
     def gridWidget(me,self):
         currentRows=self.net_info_grid.rowCount()
@@ -73,7 +74,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         except Exception as e:
             self.err.emit((e,))
         self.exec_()
-       
+    '''   
     def update_info(me,self):
         #iterate through the rows for the address
         #if the address does not exist in data_sig
@@ -100,11 +101,13 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                     counter+=1
                     #print(found,rowD.address)
                 else:
-                    me.setupWidget(self)
+                    pass
+                    #me.setupWidget(self)
             else:
-                me.setupWidget(self)
-            
+                pass
+                #me.setupWidget(self)     
         me.sig.emit()
+    '''
 
     def updateData(me,self,k=None,noStatPrint=False):
         if 'net' in self.data_sig.keys():
@@ -116,6 +119,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                     if me.setup == False:
                         me.setupWidget(self)
                     else:
-                        me.update_info(self)
+                        pass
+                        #me.update_info(self)
         else:
             print('missing data key "net"')

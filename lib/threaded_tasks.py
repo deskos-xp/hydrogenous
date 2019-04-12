@@ -42,18 +42,12 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
 
     def gateway_info(me,self,mod):
         gt=ni.gateways()
-        ifaces=[i for i in ni.interfaces() if i != 'lo']
         gateways={}
-        for iface in ifaces:
-            gateways[iface]={}
-            for i in gt.keys():
-                if i != 'default':
-                    for x in gt[i]:
-                        jade=[ni.address_families[i],]
-                        jade.extend([z for z in x])
-                        gateways[iface][ni.address_families[i]]=jade                
+        for i in gt.keys():
+            if i != 'default':
+                gateways[ni.address_families[i]]=gt[i]
         mod['net']['gateways']=gateways
-        print(mod['net']['gateways'])
+        #print(mod['net']['gateways'])
         return mod
 
 

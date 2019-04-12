@@ -9,15 +9,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_network_info(object):
-    def setupUi(self, network_info):
-        network_info.setObjectName("network_info")
-        network_info.resize(532, 336)
-        self.gridLayout_2 = QtWidgets.QGridLayout(network_info)
+class Ui_gateway_info(object):
+    def setupUi(self, gateway_info):
+        gateway_info.setObjectName("gateway_info")
+        gateway_info.resize(532, 336)
+        self.gridLayout_2 = QtWidgets.QGridLayout(gateway_info)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
-        self.gateways = QtWidgets.QGroupBox(network_info)
+        self.gateways = QtWidgets.QGroupBox(gateway_info)
         self.gateways.setObjectName("gateways")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.gateways)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -57,20 +57,20 @@ class Ui_network_info(object):
         self.gridLayout.addWidget(self.gateways, 0, 0, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
 
-        self.retranslateUi(network_info)
-        QtCore.QMetaObject.connectSlotsByName(network_info)
+        self.retranslateUi(gateway_info)
+        QtCore.QMetaObject.connectSlotsByName(gateway_info)
 
-    def retranslateUi(self, network_info):
+    def retranslateUi(self, gateway_info):
         _translate = QtCore.QCoreApplication.translate
-        network_info.setWindowTitle(_translate("network_info", "Form"))
-        self.gateways.setTitle(_translate("network_info", "Gateways"))
+        gateway_info.setWindowTitle(_translate("gateway_info", "Form"))
+        self.gateways.setTitle(_translate("gateway_info", "Gateways"))
         item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(_translate("network_info", "family"))
+        item.setText(_translate("gateway_info", "family"))
         item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("network_info", "address"))
+        item.setText(_translate("gateway_info", "address"))
         item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("network_info", "interface"))
+        item.setText(_translate("gateway_info", "interface"))
         item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("network_info", "default"))
+        item.setText(_translate("gateway_info", "default"))
 
 

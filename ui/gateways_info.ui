@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>network_info</class>
- <widget class="QWidget" name="network_info">
+ <class>gateway_info</class>
+ <widget class="QWidget" name="gateway_info">
   <property name="geometry">
    <rect>
     <x>0</x>

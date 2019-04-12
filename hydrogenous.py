@@ -15,6 +15,7 @@ for i in lib:
 import rsrc,canvas,libControls,threaded_tasks,processing_graphs,network_graphs,disk_graphs
 import sensors_tab_battery,sensors_tab_temperatures,network_info_tab
 from libproxyfilter import taskProxyFilter 
+import gateway_info_tab
        
 class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     safemode_used=False
@@ -90,6 +91,10 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             self.main['tabs']['network_info'][i]=network_info_tab.grapher(i,self.main,self)
             #self.main['tabs']['network_info'][i].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['network_info'][i].start()
+        self.main['tabs']['network_info']['gateway_setup']=False
+
+        self.main['tabs']['network_info']['gateway']=gateway_info_tab.grapher('gateways',self.main,self)
+        self.main['tabs']['network_info']['gateway'].start()
 
     def tasks_tab_handler(self):
         currentTab=self.tabWidget.tabText(self.tabWidget.currentIndex())

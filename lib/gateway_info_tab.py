@@ -9,7 +9,7 @@ for i in lib:
 
 import rsrc,canvas,resource
 import canvas2
-import network_info
+import gateways_info
 
 class grapher(QtCore.QThread,QtCore.QCoreApplication):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -25,9 +25,10 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         #work this data into network tab thread
         me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
         me.graph=QtWidgets.QDialog(me.parent)
-        me.tool=network_info.Ui_network_info()
+        me.tool=gateways_info.Ui_gateway_info()
         me.tool.setupUi(me.graph)
-        me.tool.nic.setTitle(me.name)        
+        
+        #me.tool.nic.setTitle(me.name)        
         #prefill rows of qtablewidget with data
         #reference document from stack over flow
         #https://stackoverflow.com/questions/40815730/how-to-add-and-retrieve-items-to-and-from-qtablewidget-using-pyqt5?rq=1
@@ -36,8 +37,9 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         me.setup=False
         me.gridWidget(parent)
 
-
     def setupWidget(me,self): 
+        pass
+        '''
         #me.tool.tableWidget.clear()
         me.tool.tableWidget.clearContents()
         me.tool.tableWidget.setRowCount(0)
@@ -57,7 +59,8 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                 header = me.tool.tableWidget.horizontalHeader()       
                 header.setSectionResizeMode(num2, QtWidgets.QHeaderView.Stretch)
         me.setup=True      
-
+        '''
+    
     def gridWidget(me,self):
         currentRows=self.net_info_grid.rowCount()
         myRow=currentRows+1

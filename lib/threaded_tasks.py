@@ -8,7 +8,7 @@ for i in lib:
     sys.path.append(i)
 
 import rsrc,canvas,resource
-
+import netifaces as ni
 
 class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -39,6 +39,23 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
     rx={}
     disk_rx={}
     disk_tx={} 
+
+    def gateway_info(me,self,mod):
+        gt=ni.gateways()
+        ifaces=[i for i in ni.interfaces() if i != 'lo']
+        gateways={}
+        for iface in ifaces:
+            gateways[iface]={}
+            for i in gt.keys():
+                if i != 'default':
+                    for x in gt[i]:
+                        jade=[ni.address_families[i],]
+                        jade.extend([z for z in x if z not in ifaces])
+                        gateways[iface][ni.address_families[i]]=jade                
+        mod['net']['gateways']=gateways
+        print(mod['net']['gateways'])
+        return mod
+
 
     def updateData(me,self,k=None,noStatPrint=False): 
         mod={}
@@ -81,6 +98,7 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
         mod=me.sensors_fans(self,mod) 
         mod=me.sensors_battery(self,mod)
         mod=me.sensors_temperatures(self,mod)
+        mod=me.gateway_info(self,mod)
         return mod
 
     def sensors_fans(me,self,mod):

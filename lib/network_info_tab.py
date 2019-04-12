@@ -37,8 +37,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         me.gridWidget(parent)
 
 
-    def setupWidget(me,self):
-
+    def setupWidget(me,self): 
         #me.tool.tableWidget.clear()
         me.tool.tableWidget.clearContents()
         me.tool.tableWidget.setRowCount(0)
@@ -72,7 +71,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         except Exception as e:
             self.err.emit((e,))
         self.exec_()
-
+       
     def update_info(me,self):
         #iterate through the rows for the address
         #if the address does not exist in data_sig

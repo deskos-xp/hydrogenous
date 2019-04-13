@@ -41,32 +41,32 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             if i[-1] not in '1234567890':
                 for mode in ['tx','rx']:
                     self.main['tabs']['disk'][i][mode]=disk_graphs.grapher(i,self.main,self,mode)
-                    self.main['tabs']['disk'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+                    #self.main['tabs']['disk'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
                     self.main['tabs']['disk'][i][mode].start()
 
     def sensors_tab_handler(self,index):
         if platform.uname().system == 'Linux':
             self.main['tabs']['sensors']={}
             self.main['tabs']['sensors']['battery']=sensors_tab_battery.grapher('battery',self.main,self)
-            self.main['tabs']['sensors']['battery'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+            #self.main['tabs']['sensors']['battery'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['sensors']['battery'].start()
         
             self.main['tabs']['sensors']['temperatures']=sensors_tab_temperatures.grapher('temperatures',self.main,self)
-            self.main['tabs']['sensors']['temperatures'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+            #self.main['tabs']['sensors']['temperatures'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['sensors']['temperatures'].start()
 
     def processing_tab_handler(self,index):
         self.main['tabs']['processing']={}
         self.main['tabs']['processing']['cpu']=processing_graphs.grapher('cpu',self.main,self)
-        self.main['tabs']['processing']['cpu'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+        #self.main['tabs']['processing']['cpu'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
         
         self.main['tabs']['processing']['ram_percent']=processing_graphs.grapher('ram_percent',self.main,self)
-        self.main['tabs']['processing']['ram_percent'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+        #self.main['tabs']['processing']['ram_percent'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
         
         self.main['tabs']['processing']['swap_percent']=processing_graphs.grapher('swap_percent',self.main,self)
-        self.main['tabs']['processing']['swap_percent'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+        #self.main['tabs']['processing']['swap_percent'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
         self.main['tabs']['processing']['swap_percent'].start()
         self.main['tabs']['processing']['ram_percent'].start()
@@ -82,7 +82,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             self.main['tabs']['network'][i]={}
             for mode in ['rx','tx']:
                 self.main['tabs']['network'][i][mode]=network_graphs.grapher(i,self.main,self,mode)
-                self.main['tabs']['network'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
+                #self.main['tabs']['network'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
 
                 self.main['tabs']['network'][i][mode].start()

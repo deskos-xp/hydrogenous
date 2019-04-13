@@ -59,7 +59,7 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
         mod=me.net_collection(self,mod)
         mod=me.disk_collection(self,mod)
         mod=me.sensors_collection(self,mod)
-
+        mod=me.gateway_info(self,mod)
         #print(mod['disk']['speed']['sda3'])
         me.sig.emit(mod)       
 
@@ -92,7 +92,6 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
         mod=me.sensors_fans(self,mod) 
         mod=me.sensors_battery(self,mod)
         mod=me.sensors_temperatures(self,mod)
-        mod=me.gateway_info(self,mod)
         return mod
 
     def sensors_fans(me,self,mod):

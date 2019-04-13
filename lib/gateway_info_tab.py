@@ -10,6 +10,7 @@ for i in lib:
 import rsrc,canvas,resource
 import canvas2
 import gateways_info
+import netifaces as ni
 
 class grapher(QtCore.QThread,QtCore.QCoreApplication):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -24,43 +25,41 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         me.timer.moveToThread(me)
         #work this data into network tab thread
         me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
+        me.data={}
         me.graph=QtWidgets.QDialog(me.parent)
         me.tool=gateways_info.Ui_gateway_info()
         me.tool.setupUi(me.graph)
-        
-        #me.tool.nic.setTitle(me.name)        
-        #prefill rows of qtablewidget with data
         #reference document from stack over flow
         #https://stackoverflow.com/questions/40815730/how-to-add-and-retrieve-items-to-and-from-qtablewidget-using-pyqt5?rq=1
-        #rows=me.tool.tableWidget.rowCount()
-        #me.tool.tableWidget.insertRow(rows)
         me.setup=False
-        me.setupWidget(parent)
         me.gridWidget(parent)
         
-
     def setupWidget(me,self): 
         #this line clears header text as well, do not use it
         #me.tool.tableWidget.clear()
         me.tool.tableWidget.clearContents()
         me.tool.tableWidget.setRowCount(0)
         if 'net' in self.data_sig.keys(): 
-            local=self.data_sig['net']['gateways']
-            counter=0
-            for family in local.keys():
-                for subElements in local[family]:
-                    me.tool.tableWidget.insertRow(counter)
-                    items=[]
-                    items.append(QtWidgets.QTableWidgetItem(family))
-                    for i in subElements:
-                        items.append(QtWidgets.QTableWidgetItem(i))
-                    print(family,subElements,items) 
-                    for col,i in enumerate(items):
-                        me.tool.tableWidget.setItem(counter,col,i)
-                    counter+=1
-               
-        me.setup=True      
-        
+            if self.data_sig['net']['gateways'] != me.data:
+                local=self.data_sig['net']['gateways']
+                counter=0
+                #print(local,'gateway')
+                for family in local.keys():
+                    for subElements in local[family]:
+                        me.tool.tableWidget.insertRow(counter)
+                        items=[]
+                        items.append(QtWidgets.QTableWidgetItem(family))
+                        for i in subElements:
+                            items.append(QtWidgets.QTableWidgetItem(str(i)))
+                        #print(family,subElements,items) 
+                        for col,i in enumerate(items):
+                            me.tool.tableWidget.setItem(counter,col,i)
+                    counter+=1      
+                me.data=self.data_sig['net']['gateways']
+            me.setup=True      
+        else:
+            me.setup=False
+        me.sig.emit()
     
     def gridWidget(me,self):
         currentRows=self.net_info_grid.rowCount()
@@ -74,7 +73,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         except Exception as e:
             self.err.emit((e,))
         self.exec_()
-    '''   
+      
     def update_info(me,self):
         #iterate through the rows for the address
         #if the address does not exist in data_sig
@@ -82,44 +81,29 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         #if the address does exist
         #check if any fields have changed and update them if necessary        
         #print(self.data_sig['net']['addrs'][me.name])
+
+        #new simplicity, check if old data dict is the same as new data dict if not so, update widget
+
         table=me.tool.tableWidget
         rows=table.rowCount()
         columns=table.columnCount()
-        addrs=[i.address for i in self.data_sig['net']['addrs'][me.name]]
+        ifaces=ni.interfaces()
         col=1
-        for i in range(rows):
-            rowD=self.data_sig['net']['addrs'][me.name]
-            if len(rowD) == rows:
-                rowD=rowD[i]
-                item=table.item(i,col)
-                found=item.text()
-                counter=0
-                if found in rowD.address:
-                    row=item.row()
-                    col=item.column()
-                    #print(rowD.address,row,col)
-                    counter+=1
-                    #print(found,rowD.address)
-                else:
-                    pass
-                    #me.setupWidget(self)
-            else:
-                pass
-                #me.setupWidget(self)     
+        counter=0
+        if self.data_sig['net']['gateways'] != me.data:
+            me.setupWidget(self)        
+
         me.sig.emit()
-    '''
 
     def updateData(me,self,k=None,noStatPrint=False):
         if 'net' in self.data_sig.keys():
             tabIndex=self.tabWidget.currentIndex()
             tabText=self.tabWidget.tabText(tabIndex)
-
             if tabText.lower() == 'network':
                 if self.net_sub.tabText(self.net_sub.currentIndex()).lower() == 'info.':
                     if me.setup == False:
                         me.setupWidget(self)
                     else:
-                        pass
-                        #me.update_info(self)
+                        me.update_info(self)
         else:
             print('missing data key "net"')

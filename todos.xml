@@ -1,0 +1,21 @@
+<todos>
+	<disk_info_tab>
+		disk partitions
+		disk usage per partition
+	</disk_info_tab>
+	<settings_tab>
+		add logging group box
+			enable logging check box
+			log data to sqlite or mysql database combobox
+			server address or hostname lineEdit
+			server user lineEdit
+			database name - if not provided pregenerate datebase name as logging-`date`_`time`
+	</settings_tab>
+	<logging_thread>
+		stores 500 interval units of data
+		flattens data format per interval to be used in sql format
+		sends 500 interval units of data to server
+		create a status bar message indicating that data has been committed
+		detects if a quit signal has been given to the application, and keeps app open until data has been committed properly, then shuts down
+	</logging_thread>
+</todos>

@@ -32,9 +32,7 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
         except Exception as e:
             self.err.emit((e,))
         self.exec_()
-        loop=QtCore.QEventLoop()
-        loop.exec_
-
+        
     tx={}
     rx={}
     disk_rx={}
@@ -159,9 +157,9 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
         me.disk_rx=tmp_rx
         me.disk_tx=tmp_tx
 
-        for path in mod['disk']['io']:
-            Path='/dev/{}'.format(path)
-            mod['disk']['usage'][path]=psutil.disk_usage(Path)
+        for path in mod['disk']['partitions']:
+            Path=path.mountpoint
+            mod['disk']['usage'][path.device]=psutil.disk_usage(Path)
 
         for path in mod['disk']['io'].keys():
             mod['disk']['speed'][path]={}

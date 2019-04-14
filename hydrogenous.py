@@ -15,7 +15,7 @@ for i in lib:
 import rsrc,canvas,libControls,threaded_tasks,processing_graphs,network_graphs,disk_graphs
 import sensors_tab_battery,sensors_tab_temperatures,network_info_tab
 from libproxyfilter import taskProxyFilter 
-import gateway_info_tab
+import gateway_info_tab,disk_info_tab
        
 class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     safemode_used=False
@@ -43,6 +43,8 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
                     self.main['tabs']['disk'][i][mode]=disk_graphs.grapher(i,self.main,self,mode)
                     #self.main['tabs']['disk'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
                     self.main['tabs']['disk'][i][mode].start()
+        self.main['tabs']['disk_info']=disk_info_tab.grapher('Partitions',self.main,self)
+        self.main['tabs']['disk_info'].start()
 
     def sensors_tab_handler(self,index):
         if platform.uname().system == 'Linux':

@@ -21,7 +21,7 @@
     <item row="1" column="2">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>4</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="processing">
        <attribute name="title">
@@ -38,8 +38,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>735</width>
-             <height>479</height>
+             <width>428</width>
+             <height>428</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
@@ -160,7 +160,7 @@
           <item row="0" column="0">
            <widget class="QTabWidget" name="disk_sub">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="info">
              <attribute name="title">
@@ -177,13 +177,13 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>98</width>
-                   <height>28</height>
+                   <width>711</width>
+                   <height>428</height>
                   </rect>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_30">
                   <item row="0" column="0">
-                   <layout class="QGridLayout" name="gridLayout_26"/>
+                   <layout class="QGridLayout" name="disk_info"/>
                   </item>
                  </layout>
                 </widget>
@@ -255,8 +255,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>709</width>
-                     <height>426</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_21">
@@ -288,8 +288,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>709</width>
-                     <height>426</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_38">
@@ -339,8 +339,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>709</width>
-                     <height>426</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_34">

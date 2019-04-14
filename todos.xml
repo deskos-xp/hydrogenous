@@ -1,8 +1,12 @@
 <todos>
 	<disk_info_tab>
-		disk partitions
-		disk usage per partition
+		[done]disk partitions
+		[done]disk usage per partition
+		bug testing!
 	</disk_info_tab>
+	<all_tabs_with_tables>
+		add functionaliy that when user clicks on a cell in any table, the text in table cell is copied to the clipboard automatically
+	</all_tabs_with_tables>
 	<settings_tab>
 		add logging group box
 			enable logging check box
@@ -18,4 +22,7 @@
 		create a status bar message indicating that data has been committed
 		detects if a quit signal has been given to the application, and keeps app open until data has been committed properly, then shuts down
 	</logging_thread>
+	<config_options_and_settings_tab>
+		set default tab to display on start
+	</config_options_and_settings_tab>
 </todos>

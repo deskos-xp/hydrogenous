@@ -23,7 +23,6 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     data={}    
     data_sig={} 
     #overtime data will be held in each thread class
-
     def define_timer(self):
         currentIndex=self.tabWidget.currentIndex()
         tabText=self.tabWidget.tabText(currentIndex)
@@ -31,10 +30,52 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.tasks_tab_handler()
         self.processing_tab_handler(tabText)
         self.network_tab_handler(tabText)
+        #setup disks tab first
         self.disk_tab_handler(tabText)
+        #start polling for new data
+        self.disk_timer()
         self.sensors_tab_handler(tabText)
 
-    def disk_tab_handler(self,index):
+    def detect_disk(self,index):
+        disks=psutil.disk_partitions()
+        main_disks=self.main['tabs']['disk'].keys()
+
+        tmp=[]
+        for i in main_disks:
+            count=0
+            for ii in '1234567890':
+                if ii not in i:
+                    count+=1
+            if count < len('1234567890'):
+                tmp.append(i)
+        main_disks=tmp
+
+        tmp=[]
+        all_part=[x.fstype for x in psutil.disk_partitions(all=True)]
+        for i in main_disks:
+            ap=[os.path.basename(p.device) for p in psutil.disk_partitions()]
+            if i in ap:
+                    tmp.append(i)
+        main_disks=tmp
+        tmp=[]
+        
+        #print(len(disks),len(main_disks),self.disks)
+        if len(disks) != self.disks:
+            self.disks=len(psutil.disk_partitions())
+            for i in self.main['tabs']['disk'].keys():
+                for ii in self.main['tabs']['disk'][i].keys():
+                    self.main['tabs']['disk'][i][ii].stop(self)
+            self.main['tabs']['disk']={}
+            self.disk_tab_handler('disks',stage1Only=True)
+
+    def disk_timer(self):
+        print('started disk timer')
+        self.main['disk_timer']=QtCore.QTimer()
+        self.main['disk_timer'].timeout.connect(lambda: self.detect_disk('disks'))
+        self.main['disk_timer'].start(self.main['interval'])
+
+    def disk_tab_handler(self,index,stage1Only=False):
+        self.disks=len(psutil.disk_partitions())
         self.main['tabs']['disk']={}
         for i in psutil.disk_io_counters(perdisk=True).keys():
             self.main['tabs']['disk'][i]={}
@@ -43,9 +84,10 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
                     self.main['tabs']['disk'][i][mode]=disk_graphs.grapher(i,self.main,self,mode)
                     #self.main['tabs']['disk'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
                     self.main['tabs']['disk'][i][mode].start()
-        self.main['tabs']['disk_info']=disk_info_tab.grapher('Partitions',self.main,self)
-        self.main['tabs']['disk_info'].start()
-
+        if stage1Only == False:
+            self.main['tabs']['disk_info']=disk_info_tab.grapher('Partitions',self.main,self)
+            self.main['tabs']['disk_info'].start()
+ 
     def sensors_tab_handler(self,index):
         if platform.uname().system == 'Linux':
             self.main['tabs']['sensors']={}

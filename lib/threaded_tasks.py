@@ -9,6 +9,7 @@ for i in lib:
 
 import rsrc,canvas,resource
 import netifaces as ni
+import gc
 
 class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -59,6 +60,7 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
         mod=me.sensors_collection(self,mod)
         mod=me.gateway_info(self,mod)
         #print(mod['disk']['speed']['sda3'])
+        gc.collect()
         me.sig.emit(mod)       
 
     def tasks_collection(me,self,mod):

@@ -14,22 +14,39 @@ class control:
         pass
         #self.tabWidget.currentChanged.connect(lambda sig: me.handle_threads(self,sig))
     
-
     def stop_all_threads(me,self):
+        self.main['disk_timer'].stop()
         for i in self.main['tabs'].keys():
-            for x in self.main['tabs'][i].keys():
-                if i not in ['network']:
-                    self.main['tabs'][i][x].quit()
-                    self.main['tabs'][i][x].wait()
-                else:
-                    for z in self.main['tabs'][i][x].keys():
-                        self.main['tabs'][i][x][z].quit()
-                        self.main['tabs'][i][x][z].wait()              
-
+            if type(self.main['tabs'][i]) == type(dict()):
+                for x in self.main['tabs'][i].keys():
+                    if i not in ['network']:
+                        if x not in ['gateway_setup',]:
+                            print(self.main['tabs'][i][x],i,x)
+                            if i in ['processing','network_info','disk_info','sensors']:
+                                self.main['tabs'][i][x].quit()
+                                self.main['tabs'][i][x].wait()
+                                self.main['tabs'][i][x].start()
+                            else:
+                                for z in self.main['tabs'][i][x].keys():
+                                    self.main['tabs'][i][x][z].quit()
+                                    self.main['tabs'][i][x][z].wait()
+                                    self.main['tabs'][i][x][z].start()
+                    else:
+                        for z in self.main['tabs'][i][x].keys():
+                            self.main['tabs'][i][x][z].quit()
+                            self.main['tabs'][i][x][z].wait()              
+                            self.main['tabs'][i][x][z].start()              
+            else:
+                self.main['tabs'][i].quit()
+                self.main['tabs'][i].wait()
+                self.main['tabs'][i].start()
+        self.main['disk_timer'].start()
+    
     def handle_threads(me,self,sig):
         caller=self.sender()
         me.stop_all_threads(self)
-        tabText=caller.tabText(sig).lower()
+        #tabText=caller.tabText(sig).lower()
+        '''
         if tabText in self.main['tabs'].keys():
             for i in self.main['tabs'][tabText].keys():
                 if tabText not in ['network']:
@@ -37,6 +54,8 @@ class control:
                 else:
                     for z in self.main['tabs'][tabText][i].keys():
                         self.main['tabs'][tabText][i][z].start()
+        '''
+        #me.saveSettings(self)
 
     def quit(me,self):
         QtWidgets.QApplication.quit()
@@ -46,7 +65,7 @@ class control:
         self.tasks.clicked.connect(lambda sig: me.tasks_clicked(self,sig))        
 
     def buttons(me,self):
-        self.intervalSet.clicked.connect(lambda: me.saveInterval(self))
+        self.intervalSet.clicked.connect(lambda sig: me.saveInterval(self,sig))
         self.setGraphSize.clicked.connect(lambda: me.saveGraphSize(self))
         self.select_facecolor.clicked.connect(lambda: me.saveFaceColor(self,noLEChange=False))
         self.setLineColor.clicked.connect(lambda: me.saveLineColor(self))
@@ -112,14 +131,17 @@ class control:
             self.main['facecolor']['current']=self.facecolor.text()
         me.saveSettings(self)
 
-    def saveInterval(me,self):
+    def saveInterval(me,self,sig):
         self.main['interval']=self.interval.value()
         self.main['collector']['thread'].quit()
         self.main['collector']['thread'].wait()
         self.main['collector']['thread'].start()
+        me.handle_threads(self,sig)
+        '''
         self.main['tabs']['processing']['cpu'].quit()
         self.main['tabs']['processing']['cpu'].wait()
         self.main['tabs']['processing']['cpu'].start() 
+        '''
         me.saveSettings(self)
 
     def saveGraphSize(me,self):

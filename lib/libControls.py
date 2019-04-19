@@ -154,7 +154,7 @@ class control:
         tmp['interval']=self.main['interval']
         tmp['line-fmt']=self.main['line-fmt']
         tmp['facecolor']=self.main['facecolor']
-
+        tmp['tabsConfig']=self.main['tabsConfig']
         print(tmp)
         with open(os.path.join(self.main['config']['dir'],self.main['config']['startup']),'w') as cfg:
             json.dump(tmp,cfg)

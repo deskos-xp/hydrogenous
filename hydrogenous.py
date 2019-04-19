@@ -268,6 +268,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     def load_settings(self):
         with open(os.path.join(self.main['config']['dir'],self.main['config']['startup']),'r') as cfg:
             tmp=json.load(cfg)
+            self.main['tabsConfig']=tmp['tabsConfig']
             self.main['graphSize']=tmp['graphSize']
             self.main['graphSize']=tmp['graphSize']
 
@@ -278,18 +279,35 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     def setWidget_settings(self):
         self.interval.setValue(self.main['interval'])
         self.graphSize.setValue(self.main['graphSize'])
-        #for i in self.main['line-fmt']['available'].keys():
-        #    self.line_fmt.addItem(i)
-        '''
-        name=None
-        for i in self.main['line-fmt']['available'].keys():
-            if self.main['line-fmt']['available'][i] == self.main['line-fmt']['current']:
-                name=i
-        if name != None:
-            self.line_fmt.setCurrentIndex(self.line_fmt.findText(name))
-        '''
         self.facecolor.setText(self.main['facecolor']['current'])
         self.lineColor.setText(self.main['line-fmt']['current'])
+        self.setDefaultTabs()
+    def setDefaultTabs(self):
+        tabs=(
+            (
+                self.tabWidget,
+                self.main['tabsConfig']['main']
+            ),
+            (
+                self.sensors_tabs,
+                self.main['tabsConfig']['sensors']
+            ),
+            (
+                self.net_sub,
+                self.main['tabsConfig']['net']
+            ),
+            (
+                self.disk_sub,
+                self.main['tabsConfig']['disk']
+            ),
+        )
+        for t,Text in tabs:
+            tabCount=t.count()
+            for i in range(tabCount):
+                text=t.tabText(i)    
+                if text == Text:
+                    t.setCurrentIndex(i)
+                    break
 
     def notify(self,rec,event):
         try:

@@ -1,5 +1,5 @@
 <todos>
-	<disk_info_tab>
+	<disk_info_tab status="done">
 		[done]disk partitions
 		[done]disk usage per partition
 		bug testing!
@@ -7,7 +7,7 @@
 	<all_tabs_with_tables>
 		add functionaliy that when user clicks on a cell in any table, the text in table cell is copied to the clipboard automatically
 	</all_tabs_with_tables>
-	<settings_tab>
+	<settings_tab status="!done">
 		add logging group box
 			enable logging check box
 			log data to sqlite or mysql database combobox
@@ -15,14 +15,13 @@
 			server user lineEdit
 			database name - if not provided pregenerate datebase name as logging-`date`_`time`
 	</settings_tab>
-	<logging_thread>
+	<logging_thread status="!done">
 		stores 500 interval units of data
-		flattens data format per interval to be used in sql format
 		sends 500 interval units of data to server
 		create a status bar message indicating that data has been committed
 		detects if a quit signal has been given to the application, and keeps app open until data has been committed properly, then shuts down
 	</logging_thread>
-	<config_options_and_settings_tab>
+	<config_options_and_settings_tab status="done">
 		set default tab to display on start
 	</config_options_and_settings_tab>
 </todos>

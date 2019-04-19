@@ -44,6 +44,9 @@
             <property name="frameShadow">
              <enum>QFrame::Sunken</enum>
             </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
             <property name="midLineWidth">
              <number>0</number>
             </property>
@@ -89,6 +92,9 @@
             <property name="frameShadow">
              <enum>QFrame::Sunken</enum>
             </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
             <property name="midLineWidth">
              <number>0</number>
             </property>
@@ -133,6 +139,9 @@
             </property>
             <property name="frameShadow">
              <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="lineWidth">
+             <number>0</number>
             </property>
             <property name="midLineWidth">
              <number>0</number>

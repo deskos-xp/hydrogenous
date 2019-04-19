@@ -16,7 +16,8 @@ import rsrc,canvas,libControls,threaded_tasks,processing_graphs,network_graphs,d
 import sensors_tab_battery,sensors_tab_temperatures,network_info_tab
 from libproxyfilter import taskProxyFilter 
 import gateway_info_tab,disk_info_tab
-       
+import logger,settings_logger
+
 class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     safemode_used=False
     whoami=os.environ['USER']
@@ -35,7 +36,19 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         #start polling for new data
         self.disk_timer()
         self.sensors_tab_handler(tabText)
+        self.logger_handler()
 
+    def logger_handler(self):
+        self.logger_groupbox.setEnabled(self.useLogger.isChecked())
+        if self.useLogger.isChecked() == True:
+            if 'logger' not in self.main.keys():
+                self.main['logger']=logger.logger(self,"logger")
+            self.main['logger'].start()
+        else:
+            if 'logger' in self.main.keys():
+                self.main['logger'].quit()
+                self.main['logger'].wait()
+        
     def detect_disk(self,index):
         disks=psutil.disk_partitions()
         main_disks=self.main['tabs']['disk'].keys()
@@ -271,7 +284,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             self.main['tabsConfig']=tmp['tabsConfig']
             self.main['graphSize']=tmp['graphSize']
             self.main['graphSize']=tmp['graphSize']
-
+            self.main['useLogger']=tmp['useLogger']
             self.main['interval']=tmp['interval']
             self.main['line-fmt']=tmp['line-fmt']
             self.main['facecolor']=tmp['facecolor']
@@ -281,7 +294,10 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.graphSize.setValue(self.main['graphSize'])
         self.facecolor.setText(self.main['facecolor']['current'])
         self.lineColor.setText(self.main['line-fmt']['current'])
+        self.useLogger.setChecked(self.main['useLogger'])
+
         self.setDefaultTabs()
+
     def setDefaultTabs(self):
         tabs=(
             (
@@ -338,6 +354,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
 
         self.main['used']={}
         self.main['controls']=libControls.control(self)
+        self.main['logger_settings']=settings_logger.settings_logger(self)
 
         self.main['interval']=2000
         self.load_settings()

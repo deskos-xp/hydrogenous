@@ -11,20 +11,31 @@ import rsrc,canvas,resource
 import netifaces as ni
 import gc
 
-class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
+class threaded_tasks(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
     sig=QtCore.pyqtSignal(dict)
     err=QtCore.pyqtSignal(tuple)
 
-    def __init__(self,name,mainCopy,parent):
-        QtCore.QThread.__init__(self,parent)
+    def __init__(self,name,mainCopy,parent,thread=None):
+        #QtCore.QThread.__init__(self,parent)
+        super(self.__class__,self).__init__(thread)
         self.main=mainCopy
         self.parent=parent
         self.name=name
         self.interval=self.main['interval']
         self.timer=QtCore.QTimer()
-        self.timer.moveToThread(self)
+        #self.timer.moveToThread(self)
         self.timer.timeout.connect(lambda: self.updateData(self.parent,k=self.name))
+        self.run()
+
+    def quit(self):
+        self.timer.stop()
+
+    def wait(self):
+        pass
+
+    def start(self):
+        self.timer.start(self.parent.main['interval'])
 
     def run(self):
         try:
@@ -32,7 +43,7 @@ class threaded_tasks(QtCore.QThread,QtCore.QCoreApplication):
             self.err.emit(())    
         except Exception as e:
             self.err.emit((e,))
-        self.exec_()
+        #self.exec_()
         
     tx={}
     rx={}

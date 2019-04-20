@@ -11,7 +11,7 @@ import rsrc,canvas,resource
 import canvas2
 import battery_widget
 
-class grapher(QtCore.QThread,QtCore.QCoreApplication):
+class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
     sig=QtCore.pyqtSignal()
     err=QtCore.pyqtSignal(tuple)
@@ -21,14 +21,14 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
         hh, mm = divmod(mm, 60)
         return "%d:%02d:%02d" % (hh, mm, ss)
 
-    def __init__(me,name,mainCopy,parent):
-
-        QtCore.QThread.__init__(me,parent)
+    def __init__(me,name,mainCopy,parent,thread=None):
+        super(me.__class__,me).__init__(thread)
+        #QtCore.QThread.__init__(me,parent)
         me.main=mainCopy
         me.parent=parent
         me.name=name
         me.timer=QtCore.QTimer()
-        me.timer.moveToThread(me)
+        #me.timer.moveToThread(me)
         #work this data into network tab thread
         me.iconPath='usr/share/hydrogenous/icons'
         me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
@@ -58,7 +58,8 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                 me.graph.plugged_in.setPixmap(me.battery_icon)
             
             me.gridWidget(parent)
-        
+            me.run()
+
     def gridWidget(me,self):
         self.battery_grid.addWidget(me.dialog,0,0,1,1)
 
@@ -69,7 +70,16 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
             self.err.emit(())    
         except Exception as e:
             self.err.emit((e,))
-        self.exec_()
+        #self.exec_()
+
+    def quit(me):
+        me.timer.stop()
+
+    def wait(me):
+        pass
+
+    def start(me):
+        me.timer.start(me.parent.main['interval'])
 
     def update_widget(me,self):
         #create an easter egg for april fools where the battery lcd counts down to zero from 2hours

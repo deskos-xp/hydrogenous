@@ -17,10 +17,9 @@ class settings_logger:
     def settingsModeChange(me,self,formatName):
         if formatName == 'MySQL':
             self.sqlite3Browse.setEnabled(False)
-            self.serverAddress.setEnabled(False)
-            self.serverUser.setEnabled(False)
-
-        if formatName == 'SQLite3':
+            self.serverAddress.setEnabled(True)
+            self.serverUser.setEnabled(True)
+        elif formatName == 'SQLite3':
             self.sqlite3Browse.setEnabled(True)
             self.serverAddress.setEnabled(False)
             self.serverUser.setEnabled(False)

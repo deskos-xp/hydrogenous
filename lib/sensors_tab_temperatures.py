@@ -11,19 +11,19 @@ import rsrc,canvas,resource
 import canvas2
 import temperature_widget
 
-class grapher(QtCore.QThread,QtCore.QCoreApplication):
+class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
     sig=QtCore.pyqtSignal()
     err=QtCore.pyqtSignal(tuple)
 
-    def __init__(me,name,mainCopy,parent):
-
-        QtCore.QThread.__init__(me,parent)
+    def __init__(me,name,mainCopy,parent,thread=None):
+        super(me.__class__,me).__init__(thread)        
+        #QtCore.QThread.__init__(me,parent)
         me.main=mainCopy
         me.parent=parent
         me.name=name
         me.timer=QtCore.QTimer()
-        me.timer.moveToThread(me)
+        #me.timer.moveToThread(me)
         me.dialogs={}
         me.obj={}
         #work this data into network tab thread
@@ -44,6 +44,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                     me.obj[key+element.label].critical.display(element.critical)
                     print(element,'sub_element,key')          
             me.gridWidget(parent)
+            me.run()
 
     def update_temp(me,self):
         local=self.data_sig['sensors']['temperatures']
@@ -68,8 +69,16 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
             self.err.emit(())    
         except Exception as e:
             self.err.emit((e,))
-        self.exec_()
+        #self.exec_()
 
+    def quit(me):
+        me.timer.stop()
+
+    def wait(me):
+        pass
+
+    def start(me):
+        me.timer.start(me.parent.main['interval'])
     def update_widget(me,self):
         me.update_temp(self)
 

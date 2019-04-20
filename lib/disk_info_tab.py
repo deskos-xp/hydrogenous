@@ -12,30 +12,29 @@ import canvas2
 import disk_info
 from hurry.filesize import size,iec
 
-class grapher(QtCore.QThread,QtCore.QCoreApplication):
+class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
     sig=QtCore.pyqtSignal()
     err=QtCore.pyqtSignal(tuple)
-    def __init__(me,name,mainCopy,parent):
-        QtCore.QThread.__init__(me,parent)
+    def __init__(me,name,mainCopy,parent,thread=None):
+        super(me.__class__, me).__init__(thread)
         me.main=mainCopy
         me.parent=parent
         me.name=name
         me.setup=False
         me.timer=QtCore.QTimer()
-        me.timer.moveToThread(me)
+        #me.timer.moveToThread(me)
         #work this data into network tab thread
         me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
         me.graph=QtWidgets.QDialog(parent)
-
         #load obj from 
         me.tool=disk_info.Ui_disk_info()
         me.tool.setupUi(me.graph)
 
         me.gridWidget(parent)
-        
+        me.run()
+
     def update_info(me,self):
-        pass
         #update disk widgets
         partitions=self.data_sig['disk']['partitions']
         usage=self.data_sig['disk']['usage']
@@ -79,6 +78,15 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
 
         me.sig.emit()
 
+    def quit(me):
+        me.timer.stop()
+
+    def wait(me):
+        pass
+
+    def start(me):
+        me.timer.start(me.parent.main['interval'])
+
     def gridWidget(me,self):
         currentRows=self.disk_info.rowCount()
         myRow=currentRows+1
@@ -91,7 +99,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
             self.err.emit(())    
         except Exception as e:
             self.err.emit((e,))
-        self.exec_()
+        #self.exec_()
 
     def updateData(me,self,k=None,noStatPrint=False):
         if 'disk' in self.data_sig.keys():

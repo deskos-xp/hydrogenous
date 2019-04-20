@@ -42,10 +42,16 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.logger_groupbox.setEnabled(self.useLogger.isChecked())
         if self.useLogger.isChecked() == True:
             if 'logger' not in self.main.keys():
-                self.main['logger']=logger.logger(self,"logger")
+                self.main['logger']=QtCore.QThread()
+                self.main['logger_obj']=logger.logger(self,"logger")
+                self.main['logger_obj'].moveToThread(self.main['logger'])
             self.main['logger'].start()
+            if self.main['logger_obj'].timer.isActive() == False:
+                self.main['logger_obj'].timer.start(self.main['interval'])
         else:
+            print('quit')
             if 'logger' in self.main.keys():
+                self.main['logger_obj'].quit()
                 self.main['logger'].quit()
                 self.main['logger'].wait()
         
@@ -75,9 +81,14 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         #print(len(disks),len(main_disks),self.disks)
         if len(disks) != self.disks:
             self.disks=len(psutil.disk_partitions())
+            for i in self.main['tabs']['disk_obj'].keys():
+                for ii in self.main['tabs']['disk_obj'][i].keys():
+                    self.main['tabs']['disk_obj'][i][ii].stop(self)
             for i in self.main['tabs']['disk'].keys():
                 for ii in self.main['tabs']['disk'][i].keys():
-                    self.main['tabs']['disk'][i][ii].stop(self)
+                    self.main['tabs']['disk'][i][ii].quit()
+                    self.main['tabs']['disk'][i][ii].wait()
+
             self.main['tabs']['disk']={}
             self.disk_tab_handler('disks',stage1Only=True)
 
@@ -90,39 +101,57 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     def disk_tab_handler(self,index,stage1Only=False):
         self.disks=len(psutil.disk_partitions())
         self.main['tabs']['disk']={}
+        self.main['tabs']['disk_obj']={}
         for i in psutil.disk_io_counters(perdisk=True).keys():
             self.main['tabs']['disk'][i]={}
+            self.main['tabs']['disk_obj'][i]={}
             if i[-1] not in '1234567890':
                 for mode in ['tx','rx']:
-                    self.main['tabs']['disk'][i][mode]=disk_graphs.grapher(i,self.main,self,mode)
+                    self.main['tabs']['disk'][i][mode]=QtCore.QThread()
+                    self.main['tabs']['disk_obj'][i][mode]=disk_graphs.grapher(i,self.main,self,mode)
+                    self.main['tabs']['disk_obj'][i][mode].moveToThread(self.main['tabs']['disk'][i][mode])
                     #self.main['tabs']['disk'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
                     self.main['tabs']['disk'][i][mode].start()
         if stage1Only == False:
-            self.main['tabs']['disk_info']=disk_info_tab.grapher('Partitions',self.main,self)
+            self.main['tabs']['disk_info']=QtCore.QThread()
+            self.main['tabs']['disk_info_obj']=disk_info_tab.grapher('Partitions',self.main,self)
+            self.main['tabs']['disk_info_obj'].moveToThread(self.main['tabs']['disk_info'])
             self.main['tabs']['disk_info'].start()
  
     def sensors_tab_handler(self,index):
         if platform.uname().system == 'Linux':
             self.main['tabs']['sensors']={}
-            self.main['tabs']['sensors']['battery']=sensors_tab_battery.grapher('battery',self.main,self)
+            self.main['tabs']['sensors']['battery']=QtCore.QThread()
+            self.main['tabs']['sensors']['battery_obj']=sensors_tab_battery.grapher('battery',self.main,self)
+            self.main['tabs']['sensors']['battery_obj'].moveToThread(self.main['tabs']['sensors']['battery'])
             #self.main['tabs']['sensors']['battery'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['sensors']['battery'].start()
-        
-            self.main['tabs']['sensors']['temperatures']=sensors_tab_temperatures.grapher('temperatures',self.main,self)
+
+            self.main['tabs']['sensors']['temperatures']=QtCore.QThread()
+            self.main['tabs']['sensors']['temperatures_obj']=sensors_tab_temperatures.grapher('temperatures',self.main,self)
+            self.main['tabs']['sensors']['temperatures_obj'].moveToThread(self.main['tabs']['sensors']['temperatures'])
             #self.main['tabs']['sensors']['temperatures'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['sensors']['temperatures'].start()
 
     def processing_tab_handler(self,index):
         self.main['tabs']['processing']={}
-        self.main['tabs']['processing']['cpu']=processing_graphs.grapher('cpu',self.main,self)
+        self.main['tabs']['processing']['cpu']=QtCore.QThread()
+        self.main['tabs']['processing']['cpu_obj']=processing_graphs.grapher('cpu',self.main,self)
+        self.main['tabs']['processing']['cpu_obj'].moveToThread(self.main['tabs']['processing']['cpu'])
         #self.main['tabs']['processing']['cpu'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
-        
-        self.main['tabs']['processing']['ram_percent']=processing_graphs.grapher('ram_percent',self.main,self)
+        self.main['tabs']['processing']['ram_percent']=QtCore.QThread()
+        self.main['tabs']['processing']['ram_percent_obj']=processing_graphs.grapher('ram_percent',self.main,self)
+        self.main['tabs']['processing']['ram_percent_obj'].moveToThread(self.main['tabs']['processing']['ram_percent']) 
+
+        #self.main['tabs']['processing']['ram_percent']=processing_graphs.grapher('ram_percent',self.main,self)
         #self.main['tabs']['processing']['ram_percent'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
+        self.main['tabs']['processing']['swap_percent']=QtCore.QThread()
+        self.main['tabs']['processing']['swap_percent_obj']=processing_graphs.grapher('swap_percent',self.main,self)
+        self.main['tabs']['processing']['swap_percent_obj'].moveToThread(self.main['tabs']['processing']['swap_percent'])
         
-        self.main['tabs']['processing']['swap_percent']=processing_graphs.grapher('swap_percent',self.main,self)
+        #self.main['tabs']['processing']['swap_percent']=processing_graphs.grapher('swap_percent',self.main,self)
         #self.main['tabs']['processing']['swap_percent'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
         self.main['tabs']['processing']['swap_percent'].start()
@@ -131,35 +160,49 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
 
     def network_tab_handler(self,index):
         self.main['tabs']['network']={}
+        self.main['tabs']['network_obj']={}
         self.main['tabs']['network_info']={}
+        self.main['tabs']['network_info_obj']={}
         if 'net' in self.data_sig.keys():
             print(self.data_sig['net'])
             #create threads based on interfaces detected
         for i in psutil.net_if_addrs().keys():
             self.main['tabs']['network'][i]={}
+            self.main['tabs']['network_obj'][i]={}
             for mode in ['rx','tx']:
-                self.main['tabs']['network'][i][mode]=network_graphs.grapher(i,self.main,self,mode)
+                self.main['tabs']['network'][i][mode]=QtCore.QThread()
+                self.main['tabs']['network_obj'][i][mode]=network_graphs.grapher(i,self.main,self,mode)
+                self.main['tabs']['network_obj'][i][mode].moveToThread(self.main['tabs']['network'][i][mode])
                 #self.main['tabs']['network'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
 
                 self.main['tabs']['network'][i][mode].start()
 
         for i in psutil.net_if_addrs().keys():
-            self.main['tabs']['network_info'][i]=network_info_tab.grapher(i,self.main,self)
+            self.main['tabs']['network_info'][i]=QtCore.QThread()
+            self.main['tabs']['network_info_obj'][i]=network_info_tab.grapher(i,self.main,self)
+            self.main['tabs']['network_info_obj'][i].moveToThread(self.main['tabs']['network_info'][i])
+
             #self.main['tabs']['network_info'][i].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['network_info'][i].start()
+
         self.main['tabs']['network_info']['gateway_setup']=False
-
-        self.main['tabs']['network_info']['gateway']=gateway_info_tab.grapher('gateways',self.main,self)
+        self.main['tabs']['network_info']['gateway']=QtCore.QThread()
+        self.main['tabs']['network_info']['gateway_obj']=gateway_info_tab.grapher('gateways',self.main,self)
+        self.main['tabs']['network_info']['gateway_obj'].moveToThread(self.main['tabs']['network_info']['gateway'])
         self.main['tabs']['network_info']['gateway'].start()
-
+    
     def tasks_tab_handler(self):
         currentTab=self.tabWidget.tabText(self.tabWidget.currentIndex())
         print(currentTab,0)
         self.main['collector']={}
-        self.main['collector']['data']=[]       
-        self.main['collector']['thread']=threaded_tasks.threaded_tasks('collector',self.main,self)
-        self.main['collector']['thread'].sig.connect(self.update_data_internal)
+        self.main['collector']['data']=[] 
+        self.main['collector']['thread']=QtCore.QThread()      
+
+        self.main['collector']['thread_obj']=threaded_tasks.threaded_tasks('collector',self.main,self)
+        self.main['collector']['thread_obj'].sig.connect(self.update_data_internal)
+        self.main['collector']['thread_obj'].moveToThread(self.main['collector']['thread'])
+
         print(currentTab,1)
         #when adding more columns update this to update columns headers
         labels=['Task','PID','User','CPU %','RAM Bytes']

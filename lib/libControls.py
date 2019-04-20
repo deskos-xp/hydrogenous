@@ -22,11 +22,12 @@ class control:
                     if i not in ['network']:
                         if x not in ['gateway_setup',]:
                             print(self.main['tabs'][i][x],i,x)
-                            if i in ['processing','network_info','disk_info','sensors']:
+                            if i in ['processing','network_info','network_info_obj','disk_info','disk_info_obj','sensors']:
                                 self.main['tabs'][i][x].quit()
                                 self.main['tabs'][i][x].wait()
                                 self.main['tabs'][i][x].start()
                             else:
+                                print(i,x)
                                 for z in self.main['tabs'][i][x].keys():
                                     self.main['tabs'][i][x][z].quit()
                                     self.main['tabs'][i][x][z].wait()

@@ -10,18 +10,19 @@ for i in lib:
 import rsrc,canvas,resource
 import canvas2
 
-class grapher(QtCore.QThread,QtCore.QCoreApplication):
+class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
     sig=QtCore.pyqtSignal()
     err=QtCore.pyqtSignal(tuple)
-    def __init__(me,name,mainCopy,parent,mode):
-        QtCore.QThread.__init__(me,parent)
+    def __init__(me,name,mainCopy,parent,mode,thread=None):
+        #QtCore.QThread.__init__(me,parent)
+        super(me.__class__,me).__init__(thread)
         me.main=mainCopy
         me.parent=parent
         me.name=name
         me.mode=mode
         me.timer=QtCore.QTimer()
-        me.timer.moveToThread(me)
+        #me.timer.moveToThread(me)
         #work this data into network tab thread
         me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
         me.data=[0 for i in range(me.main['graphSize'])]
@@ -52,7 +53,8 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                 )
         '''
         me.gridWidget(parent)
-        
+        me.run()
+
     def gridWidget(me,self):
         currentRows=self.net.rowCount()
         myRow=currentRows+1
@@ -65,9 +67,18 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
             self.err.emit(())    
         except Exception as e:
             self.err.emit((e,))
-        self.exec_()
+        #self.exec_()
         #loop=QtCore.QEventLoop()
         #loop.exec_
+
+    def quit(me):
+        me.timer.stop()
+
+    def wait(me):
+        pass
+
+    def start(me):
+        me.timer.start(me.parent.main['interval'])
 
     def update_buffer(me,self):
         d=self.data_sig['net']['speed'][me.name][me.mode]
@@ -109,5 +120,6 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
             if tabText.lower() == 'network':
                 if self.net_sub.tabText(self.net_sub.currentIndex()).lower() == 'monitor':
                     me.update_grid(self)
+            me.sig.emit()
         else:
             print('missing data key "net"')

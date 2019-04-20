@@ -10,18 +10,19 @@ for i in lib:
 import rsrc,canvas,resource
 import canvas2
 
-class grapher(QtCore.QThread,QtCore.QCoreApplication):
+class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
     sig=QtCore.pyqtSignal()
     err=QtCore.pyqtSignal(tuple)
-    def __init__(me,name,mainCopy,parent,mode):
-        QtCore.QThread.__init__(me,parent)
+    def __init__(me,name,mainCopy,parent,mode,thread=None):
+        #QtCore.QThread.__init__(me,parent)
+        super(me.__class__, me).__init__(thread)
         me.main=mainCopy
         me.parent=parent
         me.name=name
         me.mode=mode
         me.timer=QtCore.QTimer()
-        me.timer.moveToThread(me)
+        #me.timer.moveToThread(me)
         me.QUIT=False
         #work this data into network tab thread
         me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
@@ -40,7 +41,8 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                 )
         me.graph=me.tool.graph
         me.gridWidget(parent)
-        
+        me.run()
+
     def gridWidget(me,self):
         currentRows=self.disk_monitor.rowCount()
         myRow=currentRows+1
@@ -53,7 +55,7 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
             self.err.emit(())    
         except Exception as e:
             self.err.emit((e,))
-        self.exec_()
+        #self.exec_()
         #loop=QtCore.QEventLoop()
         #loop.exec_
 
@@ -111,6 +113,15 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
     def update_titles(me,self):
         me.box.setTitle('{} {}%'.format(me.name.upper(),str(self.data_sig['total'][me.name])))
 
+    def quit(me):
+        me.timer.stop()
+
+    def wait(me):
+        pass
+
+    def start(me):
+        me.timer.start(me.parent.main['interval'])
+
     def updateData(me,self,k=None,noStatPrint=False):
         if me.QUIT == False:
             if 'disk' in self.data_sig.keys():
@@ -122,10 +133,11 @@ class grapher(QtCore.QThread,QtCore.QCoreApplication):
                 if tabText.lower() == 'disk':
                     if self.disk_sub.tabText(self.disk_sub.currentIndex()).lower() == 'monitor':
                         me.update_grid(self)
+                        #print('disk monitor tab')
             else:
                 print('missing data key "disk"')
         else:
             me.quit()
-            me.wait()
+            #me.wait()
             #me.timer.moveToThread(me)
             #me.timer.stop()

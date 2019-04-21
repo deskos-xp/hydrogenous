@@ -10,11 +10,13 @@ for i in lib:
 import rsrc,canvas,resource
 import netifaces as ni
 import gc
+from PyQt5.QtCore import pyqtSlot
 
 class threaded_tasks(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
     sig=QtCore.pyqtSignal(dict)
     err=QtCore.pyqtSignal(tuple)
+    upd8=QtCore.pyqtSignal()
 
     def __init__(self,name,mainCopy,parent,thread=None):
         #QtCore.QThread.__init__(self,parent)
@@ -25,7 +27,7 @@ class threaded_tasks(QtCore.QObject):
         self.interval=self.main['interval']
         self.timer=QtCore.QTimer()
         #self.timer.moveToThread(self)
-        self.timer.timeout.connect(lambda: self.updateData(self.parent,k=self.name))
+        self.timer.timeout.connect(self.updateData)
         self.run()
 
     def quit(self):
@@ -60,16 +62,24 @@ class threaded_tasks(QtCore.QObject):
         #print(mod['net']['gateways'])
         return mod
 
+    @pyqtSlot()
+    def updateData(me,k=None,noStatPrint=False): 
+        self=me.parent
+        k=me.name
 
-    def updateData(me,self,k=None,noStatPrint=False): 
         mod={}
         cmd=None
                 
         mod=me.tasks_collection(self,mod)
+        me.upd8.emit()
         mod=me.net_collection(self,mod)
+        me.upd8.emit()
         mod=me.disk_collection(self,mod)
+        me.upd8.emit()
         mod=me.sensors_collection(self,mod)
+        me.upd8.emit()
         mod=me.gateway_info(self,mod)
+        me.upd8.emit()
         #print(mod['disk']['speed']['sda3'])
         gc.collect()
         me.sig.emit(mod)       

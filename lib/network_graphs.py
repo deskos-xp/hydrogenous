@@ -9,6 +9,7 @@ for i in lib:
 
 import rsrc,canvas,resource
 import canvas2
+from PyQt5.QtCore import pyqtSlot
 
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -24,7 +25,7 @@ class grapher(QtCore.QObject):
         me.timer=QtCore.QTimer()
         #me.timer.moveToThread(me)
         #work this data into network tab thread
-        me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
+        me.timer.timeout.connect(me.updateData)
         me.data=[0 for i in range(me.main['graphSize'])]
         me.old=me.data
         me.ylimit=1024
@@ -110,7 +111,10 @@ class grapher(QtCore.QObject):
     def update_titles(me,self):
         me.box.setTitle('{} {}%'.format(me.name.upper(),str(self.data_sig['total'][me.name])))
 
-    def updateData(me,self,k=None,noStatPrint=False):
+    @pyqtSlot()
+    def updateData(me,k=None,noStatPrint=False):
+        self=me.parent
+        k=me.name
         if 'net' in self.data_sig.keys():
             tabIndex=self.tabWidget.currentIndex()
             tabText=self.tabWidget.tabText(tabIndex)

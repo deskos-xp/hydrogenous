@@ -10,6 +10,7 @@ for i in lib:
 import rsrc,canvas,resource
 import canvas2
 import battery_widget
+from PyQt5.QtCore import pyqtSlot
 
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -31,7 +32,7 @@ class grapher(QtCore.QObject):
         #me.timer.moveToThread(me)
         #work this data into network tab thread
         me.iconPath='usr/share/hydrogenous/icons'
-        me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
+        me.timer.timeout.connect(me.updateData)
         if psutil.sensors_battery() != None:        
             me.dialog=QtWidgets.QDialog(me.parent)         
             me.graph=battery_widget.Ui_battery_widget()
@@ -107,9 +108,12 @@ class grapher(QtCore.QObject):
             me.percent=self.data_sig['sensors']['battery'].percent
             me.secsleft=self.data_sig['sensors']['battery'].secsleft
             me.power_plugged=self.data_sig['sensors']['battery'].power_plugged
-        me.sig.emit()
+        #me.sig.emit()
 
-    def updateData(me,self,k=None,noStatPrint=False):
+    @pyqtSlot()
+    def updateData(me,k=None,noStatPrint=False):
+        self=me.parent
+        k=me.name
         if 'sensors' in self.data_sig.keys():
             if 'battery' in self.data_sig['sensors'].keys():
                 tabIndex=self.tabWidget.currentIndex()
@@ -123,5 +127,6 @@ class grapher(QtCore.QObject):
                 if self.tabWidget.tabText(self.tabWidget.currentIndex()).lower() == 'sensors':
                     if self.sensors_tabs.tabText(self.sensors_tabs.currentIndex()).lower() == 'battery':
                         me.update_widget(self)
+            me.sig.emit()
         else:
             print('missing data key "disk"')

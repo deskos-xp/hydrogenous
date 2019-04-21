@@ -10,6 +10,7 @@ for i in lib:
 import rsrc,canvas,resource
 import canvas2
 import temperature_widget
+from PyQt5.QtCore import pyqtSlot
 
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -28,7 +29,7 @@ class grapher(QtCore.QObject):
         me.obj={}
         #work this data into network tab thread
         me.iconPath='usr/share/hydrogenous/icons'
-        me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
+        me.timer.timeout.connect(me.updateData)
         if psutil.sensors_temperatures() not in [None,{}]:                    
             #prefill
             local=psutil.sensors_temperatures()
@@ -82,7 +83,10 @@ class grapher(QtCore.QObject):
     def update_widget(me,self):
         me.update_temp(self)
 
-    def updateData(me,self,k=None,noStatPrint=False):
+    @pyqtSlot()
+    def updateData(me,k=None,noStatPrint=False):
+        self=me.parent
+        k=me.name
         if 'sensors' in self.data_sig.keys():
             if 'temperatures' in self.data_sig['sensors'].keys():
                 tabIndex=self.tabWidget.currentIndex()

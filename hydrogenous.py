@@ -17,6 +17,7 @@ import sensors_tab_battery,sensors_tab_temperatures,network_info_tab
 from libproxyfilter import taskProxyFilter 
 import gateway_info_tab,disk_info_tab
 import logger,settings_logger
+from PyQt5.QtCore import pyqtSlot
 
 class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     safemode_used=False
@@ -54,8 +55,8 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
                 self.main['logger_obj'].quit()
                 self.main['logger'].quit()
                 self.main['logger'].wait()
-        
-    def detect_disk(self,index):
+    @pyqtSlot()        
+    def detect_disk(self):
         disks=psutil.disk_partitions()
         main_disks=self.main['tabs']['disk'].keys()
 
@@ -95,7 +96,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     def disk_timer(self):
         print('started disk timer')
         self.main['disk_timer']=QtCore.QTimer()
-        self.main['disk_timer'].timeout.connect(lambda: self.detect_disk('disks'))
+        self.main['disk_timer'].timeout.connect(self.detect_disk)
         self.main['disk_timer'].start(self.main['interval'])
 
     def disk_tab_handler(self,index,stage1Only=False):

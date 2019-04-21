@@ -11,6 +11,7 @@ import rsrc,canvas,resource
 import canvas2
 import disk_info
 from hurry.filesize import size,iec
+from PyQt5.QtCore import pyqtSlot
 
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -25,7 +26,7 @@ class grapher(QtCore.QObject):
         me.timer=QtCore.QTimer()
         #me.timer.moveToThread(me)
         #work this data into network tab thread
-        me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
+        me.timer.timeout.connect(me.updateData)
         me.graph=QtWidgets.QDialog(parent)
         #load obj from 
         me.tool=disk_info.Ui_disk_info()
@@ -76,7 +77,7 @@ class grapher(QtCore.QObject):
         #refresh widget from disk change
         me.setup=True
 
-        me.sig.emit()
+        #me.sig.emit()
 
     def quit(me):
         me.timer.stop()
@@ -101,7 +102,10 @@ class grapher(QtCore.QObject):
             self.err.emit((e,))
         #self.exec_()
 
-    def updateData(me,self,k=None,noStatPrint=False):
+    @pyqtSlot()
+    def updateData(me,k=None,noStatPrint=False):
+        self=me.parent
+        k=me.name
         if 'disk' in self.data_sig.keys():
             tabIndex=self.tabWidget.currentIndex()
             tabText=self.tabWidget.tabText(tabIndex)
@@ -112,5 +116,6 @@ class grapher(QtCore.QObject):
                         me.setupWidget(self)
                     else:
                         me.update_info(self)
+            me.sig.emit()
         else:
             print('missing data key "disk"')

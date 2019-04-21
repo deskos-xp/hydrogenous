@@ -28,8 +28,6 @@ class convertFromHurry:
         else:
             return 0
 
-
-
 class taskProxyFilter(QtCore.QSortFilterProxyModel):
     def headerData(self, section, orientation, role):
         # if display role of vertical headers

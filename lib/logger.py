@@ -3,6 +3,7 @@
 import sqlite3,pymysql
 from PyQt5 import QtCore
 import time,os,platform
+from PyQt5.QtCore import pyqtSlot
 class logger(QtCore.QObject):
     sig=QtCore.pyqtSignal()
 
@@ -16,7 +17,7 @@ class logger(QtCore.QObject):
         me.parent=self
         #QtCore.QThread.__init__(me,self)
         me.timer=QtCore.QTimer()
-        me.timer.timeout.connect(lambda: me.logData(self))
+        me.timer.timeout.connect(me.logData)
         me.run()
         #me.timer.moveToThread(me)
 
@@ -35,7 +36,9 @@ class logger(QtCore.QObject):
     def start(me):
         me.timer.start(me.parent.main['interval'])
 
-    def logData(me,self):
+    @pyqtSlot()
+    def logData(me):
+        self=me.parent
         rowName=time.strftime('%mm%dd%YY_%HH%MM%SS',time.localtime())
         print(rowName)
         me.sig.emit()        

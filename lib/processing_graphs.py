@@ -10,6 +10,7 @@ for i in lib:
 
 import rsrc,canvas,resource
 import canvas2
+from PyQt5.QtCore import pyqtSlot
 
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -23,7 +24,7 @@ class grapher(QtCore.QObject):
         me.name=name
         me.timer=QtCore.QTimer()
         #me.timer.moveToThread(me)
-        me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
+        me.timer.timeout.connect(me.updateData)
         me.data=[0 for i in range(me.parent.main['graphSize'])]
         me.old=me.data
         me.tool=canvas2.PlotCanvas(
@@ -92,7 +93,6 @@ class grapher(QtCore.QObject):
         else:
             print('no QtWidgets.QGroupBox() set title for: {}'.format(boxname))
 
-
     def run(self):
         try:
             self.timer.start(self.main['interval'])
@@ -118,7 +118,6 @@ class grapher(QtCore.QObject):
         buffer_end=glen*-1
         me.data=me.data[buffer_end:]
 
-
     def update_grid(me,self):
         if me.old != me.data:  
             #was me.graph.plot
@@ -135,7 +134,7 @@ class grapher(QtCore.QObject):
         else:
             print('data for "{}" has not changed... not painting new plot'.format(me.name))
         me.old=me.data
-        me.sig.emit()
+        #me.sig.emit()
         
     def update_titles(me,self):
         if me.name in ['ram_percent','swap_percent']:
@@ -162,8 +161,10 @@ class grapher(QtCore.QObject):
                 )
             )
 
-
-    def updateData(me,self,k=None,noStatPrint=False):
+    @pyqtSlot()
+    def updateData(me,k=None,noStatPrint=False):
+        self=me.parent
+        k=me.name
         if 'total' in self.data_sig.keys():
             #print(self.data_sig['total'][me.name])
             tabIndex=self.tabWidget.currentIndex()
@@ -172,5 +173,6 @@ class grapher(QtCore.QObject):
             me.update_titles(self)
             if tabText.lower() == 'processing':
                 me.update_grid(self)
+            me.sig.emit()
         else:
             print('missing data key "total"')

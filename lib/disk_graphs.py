@@ -9,6 +9,7 @@ for i in lib:
 
 import rsrc,canvas,resource
 import canvas2
+from PyQt5.QtCore import pyqtSlot
 
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -25,7 +26,7 @@ class grapher(QtCore.QObject):
         #me.timer.moveToThread(me)
         me.QUIT=False
         #work this data into network tab thread
-        me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
+        me.timer.timeout.connect(me.updateData)
         me.data=[0 for i in range(me.main['graphSize'])]
         me.old=me.data
         me.ylimit=1024
@@ -108,7 +109,6 @@ class grapher(QtCore.QObject):
             me.stop(self)
             print('data for "{}" has not changed... not painting new plot'.format(me.name))
         me.old=me.data
-        me.sig.emit()
         
     def update_titles(me,self):
         me.box.setTitle('{} {}%'.format(me.name.upper(),str(self.data_sig['total'][me.name])))
@@ -121,8 +121,11 @@ class grapher(QtCore.QObject):
 
     def start(me):
         me.timer.start(me.parent.main['interval'])
-
-    def updateData(me,self,k=None,noStatPrint=False):
+    
+    @pyqtSlot()
+    def updateData(me,k=None,noStatPrint=False):
+        self=me.parent
+        k=me.name
         if me.QUIT == False:
             if 'disk' in self.data_sig.keys():
                 tabIndex=self.tabWidget.currentIndex()
@@ -136,6 +139,7 @@ class grapher(QtCore.QObject):
                         #print('disk monitor tab')
             else:
                 print('missing data key "disk"')
+            me.sig.emit()
         else:
             me.quit()
             #me.wait()

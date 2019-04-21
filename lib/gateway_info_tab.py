@@ -11,6 +11,7 @@ import rsrc,canvas,resource
 import canvas2
 import gateways_info
 import netifaces as ni
+from PyQt5.QtCore import pyqtSlot
 
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -25,7 +26,7 @@ class grapher(QtCore.QObject):
         me.timer=QtCore.QTimer()
         #me.timer.moveToThread(me)
         #work this data into network tab thread
-        me.timer.timeout.connect(lambda: me.updateData(me.parent,k=me.name))
+        me.timer.timeout.connect(me.updateData)
         me.data={}
         me.graph=QtWidgets.QDialog(me.parent)
         me.tool=gateways_info.Ui_gateway_info()
@@ -61,7 +62,7 @@ class grapher(QtCore.QObject):
             me.setup=True      
         else:
             me.setup=False
-        me.sig.emit()
+        #me.sig.emit()
     
     def gridWidget(me,self):
         currentRows=self.net_info_grid.rowCount()
@@ -106,7 +107,10 @@ class grapher(QtCore.QObject):
 
         me.sig.emit()
 
-    def updateData(me,self,k=None,noStatPrint=False):
+    @pyqtSlot()
+    def updateData(me,k=None,noStatPrint=False):
+        self=me.parent
+        k=me.name
         if 'net' in self.data_sig.keys():
             tabIndex=self.tabWidget.currentIndex()
             tabText=self.tabWidget.tabText(tabIndex)
@@ -116,5 +120,6 @@ class grapher(QtCore.QObject):
                         me.setupWidget(self)
                     else:
                         me.update_info(self)
+            me.sig.emit()
         else:
             print('missing data key "net"')

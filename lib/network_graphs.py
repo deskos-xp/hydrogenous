@@ -72,6 +72,9 @@ class grapher(QtCore.QObject):
         #loop=QtCore.QEventLoop()
         #loop.exec_
 
+    def stop(me):
+        me.timer.stop()
+
     def quit(me):
         me.timer.stop()
 

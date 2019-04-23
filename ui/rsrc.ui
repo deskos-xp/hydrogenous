@@ -177,8 +177,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>80</width>
-                   <height>20</height>
+                   <width>98</width>
+                   <height>28</height>
                   </rect>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_30">
@@ -206,8 +206,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>80</width>
-                   <height>20</height>
+                   <width>98</width>
+                   <height>28</height>
                   </rect>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_39">
@@ -255,8 +255,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>78</width>
-                     <height>20</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_21">
@@ -288,8 +288,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>78</width>
-                     <height>20</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_38">
@@ -339,8 +339,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>78</width>
-                     <height>20</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_34">
@@ -372,8 +372,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>78</width>
-                     <height>20</height>
+                     <width>98</width>
+                     <height>28</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_32">
@@ -534,6 +534,41 @@
             <layout class="QGridLayout" name="gridLayout_13">
              <item row="0" column="0">
               <layout class="QGridLayout" name="logger_grid">
+               <item row="6" column="0">
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>DB Name</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_9">
+                 <property name="text">
+                  <string>Password</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Host</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>DB Format</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLineEdit" name="serverUser">
+                 <property name="toolTip">
+                  <string>user to log into Host for data logging when MySQL Format is Used</string>
+                 </property>
+                </widget>
+               </item>
                <item row="2" column="1">
                 <widget class="QLineEdit" name="serverAddress">
                  <property name="toolTip">
@@ -541,17 +576,17 @@
                  </property>
                 </widget>
                </item>
-               <item row="4" column="1">
-                <widget class="QLineEdit" name="dbName">
-                 <property name="toolTip">
-                  <string>DB Name; if SQLite3 is used, then this is the filename</string>
+               <item row="7" column="1">
+                <widget class="QPushButton" name="connect">
+                 <property name="text">
+                  <string>Connect</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="label_5">
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_8">
                  <property name="text">
-                  <string>DB Name</string>
+                  <string>User</string>
                  </property>
                 </widget>
                </item>
@@ -572,14 +607,7 @@
                  </item>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>DB Format</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="2">
+               <item row="6" column="2">
                 <widget class="QPushButton" name="sqlite3Browse">
                  <property name="toolTip">
                   <string>Location to save datalog if Format is SQLite3</string>
@@ -589,24 +617,47 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_7">
-                 <property name="text">
-                  <string>Host</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QLineEdit" name="serverUser">
+               <item row="6" column="1">
+                <widget class="QLineEdit" name="dbName">
                  <property name="toolTip">
-                  <string>user to log into Host for data logging when MySQL Format is Used</string>
+                  <string>DB Name; if SQLite3 is used, then this is the filename</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_8">
+               <item row="4" column="1">
+                <widget class="QLineEdit" name="serverPassword">
+                 <property name="echoMode">
+                  <enum>QLineEdit::PasswordEchoOnEdit</enum>
+                 </property>
+                 <property name="dragEnabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
+                <widget class="QSpinBox" name="serverPort">
+                 <property name="maximum">
+                  <number>65565</number>
+                 </property>
+                 <property name="value">
+                  <number>3306</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="label_10">
                  <property name="text">
-                  <string>User</string>
+                  <string>Table Name</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QLineEdit" name="dbTable">
+                 <property name="dragEnabled">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>

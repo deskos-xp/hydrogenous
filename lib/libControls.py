@@ -3,6 +3,8 @@
 from PyQt5 import QtWidgets,QtCore,QtGui
 import os,json
 
+
+
 class control:
     def __init__(me,self):
         me.actors(self)
@@ -16,12 +18,38 @@ class control:
     
     def stop_all_threads(me,self):
         self.main['disk_timer'].stop()
+        for i in self.main['tabs'].keys(): 
+            if type(self.main['tabs'][i]) == type(dict()):
+                for ii in self.main['tabs'][i].keys():
+                    if type(self.main['tabs'][i][ii]) == type(dict()): 
+                        for iii in self.main['tabs'][i][ii].keys():
+                            if type(self.main['tabs'][i][ii][iii]) != type(QtCore.QThread()):
+                                print(self.main['tabs'][i][ii][iii],'obj')
+                                if 'timer' in dir(self.main['tabs'][i][ii][iii]):
+                                    try:
+                                        self.main['tabs'][i][ii][iii].stop()
+                                    except:
+                                        self.main['tabs'][i][ii][iii].quit()
+                    else:
+                        if type(self.main['tabs'][i][ii]) != type(QtCore.QThread()):
+                            if 'timer' in dir(self.main['tabs'][i][ii]):
+                                try:
+                                    self.main['tabs'][i][ii].stop()
+                                except:
+                                    self.main['tabs'][i][ii].quit()
+            else:
+                if type(self.main['tabs'][i]) != type(QtCore.QThread()):
+                    if 'timer' in dir(self.main['tabs'][i]):
+                        try:
+                            self.main['tabs'][i].stop()
+                        except:
+                            self.main['tabs'][i].quit()
+
         for i in self.main['tabs'].keys():
             if type(self.main['tabs'][i]) == type(dict()):
                 for x in self.main['tabs'][i].keys():
                     if i not in ['network']:
                         if x not in ['gateway_setup',]:
-                            print(self.main['tabs'][i][x],i,x)
                             if i in ['processing','network_info','network_info_obj','disk_info','disk_info_obj','sensors']:
                                 self.main['tabs'][i][x].quit()
                                 self.main['tabs'][i][x].wait()
@@ -33,7 +61,7 @@ class control:
                                     self.main['tabs'][i][x][z].wait()
                                     self.main['tabs'][i][x][z].start()
                     else:
-                        for z in self.main['tabs'][i][x].keys():
+                        for z in self.main['tabs'][i][x].keys(): 
                             self.main['tabs'][i][x][z].quit()
                             self.main['tabs'][i][x][z].wait()              
                             self.main['tabs'][i][x][z].start()              
@@ -41,6 +69,9 @@ class control:
                 self.main['tabs'][i].quit()
                 self.main['tabs'][i].wait()
                 self.main['tabs'][i].start()
+        
+        self.main['disk_timer'].setInterval(self.main['interval'])
+        self.logger_handler(reset=True)
         self.main['disk_timer'].start()
     
     def handle_threads(me,self,sig):
@@ -157,6 +188,11 @@ class control:
         tmp['facecolor']=self.main['facecolor']
         tmp['tabsConfig']=self.main['tabsConfig']
         tmp['useLogger']=self.main['useLogger']
+        tmp['dbName']=self.main['dbName']
+        tmp['dbTable']=self.main['dbTable']
+        tmp['serverAddress']=self.main['serverAddress']
+        tmp['serverPort']=self.main['serverPort']
+        tmp['serverUser']=self.main['serverUser']
 
         print(tmp)
         with open(os.path.join(self.main['config']['dir'],self.main['config']['startup']),'w') as cfg:

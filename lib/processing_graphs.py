@@ -108,6 +108,8 @@ class grapher(QtCore.QObject):
 
     def wait(me):
         pass
+    def stop(me):
+        me.timer.stop()
 
     def start(me):
         me.timer.start(me.parent.main['interval'])

@@ -1,0 +1,51 @@
+#! /usr/bin/env python3
+
+import pymysql
+
+class handler:
+    sql_type='MySQL'
+    database=None
+    def __init__(me,self,host,user,password,db,port=3306):
+        me.cursor=None
+        me.db=None
+        sql_use='''use {};'''.format(db)
+        sql_create='''create database if not exists {}'''.format(db);
+        sql_create_table=''' create table if not exists {}(id text,data text);'''.format(self.main['dbTable'])
+
+        try:
+            me.db=pymysql.connect(
+                                    host=host,
+                                    user=user,
+                                    password=password,
+                                    port=port,
+                            )
+            me.cursor=me.db.cursor()
+            print(db)
+            me.cursor.execute(sql_create)
+            me.db.commit()
+            me.cursor.execute(sql_use)
+            me.cursor.execute(sql_create_table)
+            me.db.commit()
+            self.statusBar().showMessage('Successfully Connected "{}@{}:{}"'.format(user,host,port))
+        except pymysql.err.OperationalError as err:
+            print(err)
+            self.statusBar().showMessage(str(err))
+            me.db=None
+            me.cursor=None
+        except pymysql.err.ProgrammingError as err:
+            print(err)
+            self.statusBar().showMessage(str(err))
+            print(
+                ['host',host],
+                ['password',password],
+                ['user',user],
+                ['port',port],
+                ['db',db],
+                ['sql_create',sql_create],
+                ['sql_use',sql_use],
+                sep='\n',
+                )
+
+    def disconnect(me):
+        me.datebase.commit()
+        me.database.close()    

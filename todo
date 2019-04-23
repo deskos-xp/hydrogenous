@@ -1,0 +1,1 @@
+fix timers in threads to reset when interval changed

@@ -39,22 +39,29 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.sensors_tab_handler(tabText)
         self.logger_handler()
 
-    def logger_handler(self):
+    def logger_handler(self,reset=False):
         self.logger_groupbox.setEnabled(self.useLogger.isChecked())
         if self.useLogger.isChecked() == True:
-            if 'logger' not in self.main.keys():
-                self.main['logger']=QtCore.QThread()
-                self.main['logger_obj']=logger.logger(self,"logger")
-                self.main['logger_obj'].moveToThread(self.main['logger'])
-            self.main['logger'].start()
-            if self.main['logger_obj'].timer.isActive() == False:
-                self.main['logger_obj'].timer.start(self.main['interval'])
+            if reset == False:
+                if 'logger' not in self.main.keys():
+                    self.main['logger']=QtCore.QThread()
+                    self.main['logger_obj']=logger.logger(self,"logger")
+                    self.main['logger_settings'].__init__(self)
+                    self.main['logger_obj'].moveToThread(self.main['logger'])
+                self.main['logger'].start()
+                if self.main['logger_obj'].timer.isActive() == False:
+                    self.main['logger_obj'].timer.start(self.main['interval'])
+            else:
+                self.main['logger_obj'].timer.stop()
+                self.main['logger_obj'].timer.setInterval(self.main['interval'])
+                self.main['logger_obj'].start()
         else:
             print('quit')
             if 'logger' in self.main.keys():
                 self.main['logger_obj'].quit()
                 self.main['logger'].quit()
                 self.main['logger'].wait()
+
     @pyqtSlot()        
     def detect_disk(self):
         disks=psutil.disk_partitions()
@@ -332,14 +339,25 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             self.main['interval']=tmp['interval']
             self.main['line-fmt']=tmp['line-fmt']
             self.main['facecolor']=tmp['facecolor']
-         
+            self.main['dbName']=tmp['dbName']
+            self.main['dbTable']=tmp['dbTable']
+
+            self.main['serverUser']=tmp['serverUser']
+            self.main['serverAddress']=tmp['serverAddress']
+            self.main['serverPort']=tmp['serverPort']
+
+ 
     def setWidget_settings(self):
         self.interval.setValue(self.main['interval'])
         self.graphSize.setValue(self.main['graphSize'])
         self.facecolor.setText(self.main['facecolor']['current'])
         self.lineColor.setText(self.main['line-fmt']['current'])
         self.useLogger.setChecked(self.main['useLogger'])
-
+        self.dbName.setText(self.main['dbName'])
+        self.dbTable.setText(self.main['dbTable'])
+        self.serverPort.setValue(self.main['serverPort'])
+        self.serverAddress.setText(self.main['serverAddress'])
+        self.serverUser.setText(self.main['serverUser'])
         self.setDefaultTabs()
 
     def setDefaultTabs(self):
@@ -398,11 +416,13 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
 
         self.main['used']={}
         self.main['controls']=libControls.control(self)
-        self.main['logger_settings']=settings_logger.settings_logger(self)
-
         self.main['interval']=2000
         self.load_settings()
         self.setWidget_settings()
+
+        self.main['logger_settings']=settings_logger.settings_logger(self)
+
+        
         self.define_timer()
         self.show()
        

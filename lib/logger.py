@@ -79,7 +79,7 @@ class logger(QtCore.QObject):
         self=me.parent
         rowName='{}_{}'.format(time.strftime('%mm%dd%YY_%HH%MM%SS',time.localtime()),random.randint(0,999999))
         tmp={rowName:me.parent.data_sig.copy()}
-               
+        me.parent.statusBar().showMessage(rowName)       
         me.sig.emit()
         jsonData=json.dumps(tmp)
         me.sig.emit()

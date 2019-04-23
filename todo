@@ -1,1 +1,1 @@
-fix timers in threads to reset when interval changed
+fix graphsize to properly update graphsize when changed

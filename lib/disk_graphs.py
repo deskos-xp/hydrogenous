@@ -91,10 +91,14 @@ class grapher(QtCore.QObject):
         me.wait()
 
     def update_grid(me,self):
+        if len(me.data) < self.main['graphSize']:
+            tmp=[0 for i in range(self.main['graphSize']-len(me.data))]
+            tmp.extend(me.data)
+            me.data=tmp
         #print(me.data,me.name)
         if me.old != me.data:
             ylimit=sorted(me.data)[-1]
-            if me.ylimit > ylimit:
+            if me.ylimit != ylimit:
                 ylimit=me.ylimit
             me.tool.Plot(
             data=me.data,
@@ -106,9 +110,10 @@ class grapher(QtCore.QObject):
             ylabel='Speed',
             )
         else:
-            me.stop(self)
+            #me.stop(self)
             print('data for "{}" has not changed... not painting new plot'.format(me.name))
         me.old=me.data
+        me.sig.emit()
         
     def update_titles(me,self):
         me.box.setTitle('{} {}%'.format(me.name.upper(),str(self.data_sig['total'][me.name])))

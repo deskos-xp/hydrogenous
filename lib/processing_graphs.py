@@ -115,6 +115,10 @@ class grapher(QtCore.QObject):
         me.timer.start(me.parent.main['interval'])
 
     def update_buffer(me,self):
+        if len(me.data) < self.main['graphSize']:
+            tmp=[0 for i in range(self.main['graphSize']-len(me.data))]
+            tmp.extend(me.data)
+            me.data=tmp
         me.data.append(self.data_sig['total'][me.name])
         glen=self.main['graphSize']
         buffer_end=glen*-1
@@ -136,7 +140,7 @@ class grapher(QtCore.QObject):
         else:
             print('data for "{}" has not changed... not painting new plot'.format(me.name))
         me.old=me.data
-        #me.sig.emit()
+        me.sig.emit()
         
     def update_titles(me,self):
         if me.name in ['ram_percent','swap_percent']:

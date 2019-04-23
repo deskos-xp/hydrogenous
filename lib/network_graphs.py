@@ -93,9 +93,14 @@ class grapher(QtCore.QObject):
         #print(me.data,me.name,me.mode)
 
     def update_grid(me,self):
+        if len(me.data) < self.main['graphSize']:
+            tmp=[0 for i in range(self.main['graphSize']-len(me.data))]
+            tmp.extend(me.data)
+            me.data=tmp
+
         if me.old != me.data:
             ylimit=sorted(me.data)[-1]
-            if me.ylimit > ylimit:
+            if me.ylimit != ylimit:
                 ylimit=me.ylimit
             me.tool.Plot(
             data=me.data,

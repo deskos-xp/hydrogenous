@@ -83,23 +83,23 @@ class logger(QtCore.QObject):
         me.sig.emit()
         jsonData=json.dumps(tmp)
         me.sig.emit()
-        jsonData=jsonData.encode()
-        me.sig.emit()
-        gz=gzip.compress(jsonData)
-        me.sig.emit()
-        b64=base64.b64encode(gz).decode()
-        me.sig.emit()
+        #jsonData=jsonData.encode()
+        #me.sig.emit()
+        #gz=gzip.compress(jsonData)
+        #me.sig.emit()
+        #b64=base64.b64encode(gz).decode()
+        #me.sig.emit()
 
         #db hydrogenous
         #table logs
         sql='insert {1} (id,data) values({0},{0})'.format(me.formatString,me.table)
-        me.data.append((sql,(rowName,b64)))
+        me.data.append((sql,(rowName,jsonData)))
         me.sig.emit()
-        print(len(me.data))
+        print(len(me.data),rowName)
         
         if len(me.data) >= self.main['graphSize']:
             for i in me.data:
-                print(i)
+                #print(i)
                 if me.connector.cursor != None:
                     me.connector.cursor.execute(i[0],i[1])
             print(me.connector.db)

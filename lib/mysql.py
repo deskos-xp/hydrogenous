@@ -10,7 +10,7 @@ class handler:
         me.db=None
         sql_use='''use {};'''.format(db)
         sql_create='''create database if not exists {}'''.format(db);
-        sql_create_table=''' create table if not exists {}(id text,data text);'''.format(self.main['dbTable'])
+        sql_create_table=''' create table if not exists {}(id text,data blob);'''.format(self.main['dbTable'])
 
         try:
             me.db=pymysql.connect(

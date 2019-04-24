@@ -39,6 +39,8 @@ class logger(QtCore.QObject):
     
     def quit(me):
         me.timer.stop()
+        if me.connector.db != None:
+            me.connector.db.close()
         me.sig.emit()
 
     def wait(me):
@@ -96,10 +98,17 @@ class logger(QtCore.QObject):
             #db hydrogenous
             #table logs
             sql='insert {1} (id,data) values({0},{0})'.format(me.formatString,me.table)
-            me.data.append((sql,(rowName,jsonData)))
-            me.sig.emit()
-            print(len(me.data),rowName)
-        
+            try:
+                if me.connector.db.open == True:
+                    me.connector.cursor.execute(sql,(rowName,jsonData))
+                    me.connector.db.commit()
+            except Exception as e:
+                print(e)
+    
+            #me.data.append((sql,(rowName,jsonData)))
+            #me.sig.emit()
+            print(rowName)
+            '''
             if len(me.data) >= self.main['graphSize']:
                 for i in me.data:
                     #print(i)
@@ -112,4 +121,5 @@ class logger(QtCore.QObject):
                 del(me.data)
                 gc.collect()
                 me.data=[]
+            '''
         me.sig.emit()        

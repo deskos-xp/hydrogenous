@@ -73,7 +73,9 @@ class control:
         self.main['disk_timer'].setInterval(self.main['interval'])
         self.logger_handler(reset=True)
         self.main['disk_timer'].start()
-    
+        self.main['collector']['thread_obj'].timer.stop()
+        self.main['collector']['thread_obj'].timer.start(self.main['interval'])
+ 
     def handle_threads(me,self,sig):
         caller=self.sender()
         me.stop_all_threads(self)

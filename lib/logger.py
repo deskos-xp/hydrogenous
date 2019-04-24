@@ -77,36 +77,36 @@ class logger(QtCore.QObject):
 
     @pyqtSlot()
     def logData(me):
-        self=me.parent
-        rowName='{}_uS{}'.format(time.strftime('%mm%dd%YY_%HH%MM%SS',time.localtime()),datetime.now().microsecond)
-        tmp={rowName:me.parent.data_sig.copy()}
-        me.parent.statusBar().showMessage(rowName)       
-        me.sig.emit()
-        jsonData=json.dumps(tmp)
-        me.sig.emit()
-        #jsonData=jsonData.encode()
-        #me.sig.emit()
-        #gz=gzip.compress(jsonData)
-        #me.sig.emit()
-        #b64=base64.b64encode(gz).decode()
-        #me.sig.emit()
-
-        #db hydrogenous
-        #table logs
-        sql='insert {1} (id,data) values({0},{0})'.format(me.formatString,me.table)
-        me.data.append((sql,(rowName,jsonData)))
-        me.sig.emit()
-        print(len(me.data),rowName)
+        if me.connector.cursor != None and me.connector.db != None:
+            self=me.parent
+            rowName='{}_uS{}'.format(time.strftime('%mm%dd%YY_%HH%MM%SS',time.localtime()),datetime.now().microsecond)
+            tmp={rowName:me.parent.data_sig.copy()}
+            me.parent.statusBar().showMessage(rowName)       
+            me.sig.emit()
+            jsonData=json.dumps(tmp)
+            me.sig.emit()
+            #jsonData=jsonData.encode()
+            #me.sig.emit()
+            #gz=gzip.compress(jsonData)
+            #me.sig.emit()
+            #b64=base64.b64encode(gz).decode()
+            #me.sig.emit()
+    
+            #db hydrogenous
+            #table logs
+            sql='insert {1} (id,data) values({0},{0})'.format(me.formatString,me.table)
+            me.data.append((sql,(rowName,jsonData)))
+            me.sig.emit()
+            print(len(me.data),rowName)
         
-        if len(me.data) >= self.main['graphSize']:
-            for i in me.data:
-                #print(i)
-                if me.connector.cursor != None:
-                    me.connector.cursor.execute(i[0],i[1])
-            print(me.connector.db)
-            if me.connector.db != None:
-                me.connector.db.commit()
-                print('log saved!')
-            me.data=[]
-
+            if len(me.data) >= self.main['graphSize']:
+                for i in me.data:
+                    #print(i)
+                    if me.connector.cursor != None:
+                        me.connector.cursor.execute(i[0],i[1])
+                print(me.connector.db)
+                if me.connector.db != None:
+                    me.connector.db.commit()
+                    print('log saved!')
+                me.data=[]
         me.sig.emit()        

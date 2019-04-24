@@ -1,11 +1,14 @@
 #! /usr/bin/env python3
-
+import platform
 import pymysql
-
+import netifaces as nm
 class handler:
     sql_type='MySQL'
     database=None
     def __init__(me,self,host,user,password,db,port=3306):
+        macAddress=nm.ifaddresses(([i for i in nm.interfaces() if i != 'lo'][0]))[nm.AF_PACKET][0]['addr'].replace(':','_')
+        hostname=platform.uname().node
+        db='{}__{}__{}'.format(db,macAddress,hostname)
         me.cursor=None
         me.db=None
         sql_use='''use {};'''.format(db)

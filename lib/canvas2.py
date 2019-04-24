@@ -22,7 +22,7 @@ class PlotCanvas():
         #print([i for i in dir(self.GRAPH.items)])
         #allow zooming, need to move to config
         self.GRAPH.setMouseEnabled(x=False,y=False)
-        self.GRAPH.setLimits(yMax=ylim,yMin=0,xMax=len(data),xMin=0)
+        self.GRAPH.setLimits(yMin=0,xMax=len(data),xMin=0)
 
         self.graph=QtWidgets.QFrame(parent)
         self.graph.setMinimumHeight(200)
@@ -32,7 +32,7 @@ class PlotCanvas():
         self.plt=self.GRAPH.plot(y=data,pen=pg.mkPen(pg.mkColor(fmt),width=1))
 
     def Plot(self,data,title,glen,fmt='r-',bg='w',gridColor=None,ylim=100,ylabel='% Used',xlabel='Interval'):
-        self.GRAPH.setLimits(yMax=ylim,xMax=len(data))
+        self.GRAPH.setLimits(xMax=len(data))
         self.GRAPH.setBackground(pg.mkColor(bg)) 
        
         self.plt.setData(data,pen=pg.mkPen(pg.mkColor(fmt),width=1)) 

@@ -80,10 +80,11 @@ class logger(QtCore.QObject):
         if me.connector.cursor != None and me.connector.db != None:
             self=me.parent
             rowName='{}_uS{}'.format(time.strftime('%mm%dd%YY_%HH%MM%SS',time.localtime()),datetime.now().microsecond)
-            tmp={rowName:me.parent.data_sig.copy()}
+            tmp={rowName:copy(me.parent.data_sig)}
             me.parent.statusBar().showMessage(rowName)       
             me.sig.emit()
             jsonData=json.dumps(tmp)
+            del(tmp)
             me.sig.emit()
             #jsonData=jsonData.encode()
             #me.sig.emit()

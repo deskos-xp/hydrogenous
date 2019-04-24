@@ -61,7 +61,8 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
                 self.main['logger_obj'].quit()
                 self.main['logger'].quit()
                 self.main['logger'].wait()
-
+                self.main.pop('logger')
+                self.main.pop('logger_obj')
     @pyqtSlot()        
     def detect_disk(self):
         disks=psutil.disk_partitions()

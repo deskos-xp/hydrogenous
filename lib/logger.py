@@ -3,6 +3,7 @@ from copy import copy
 
 import sqlite3,pymysql
 import json,gzip,base64
+from datetime import datetime
 
 from PyQt5 import QtCore
 import time,os,platform
@@ -18,8 +19,8 @@ class logger(QtCore.QObject):
 
     def __init__(me,self,name,thread=None):
         super(me.__class__, me).__init__(thread)
-        me.dbName="hydrogenousLogs_{}".format(platform.uname().node)
-        me.tableName=time.strftime('%mm%dd%YY_%HH%MM%SS',time.localtime())
+        me.dbName=""
+        me.tableName=''
         me.data=[]
         me.name=name
         #self is parent
@@ -77,7 +78,7 @@ class logger(QtCore.QObject):
     @pyqtSlot()
     def logData(me):
         self=me.parent
-        rowName='{}_{}'.format(time.strftime('%mm%dd%YY_%HH%MM%SS',time.localtime()),random.randint(0,999999))
+        rowName='{}_uS{}'.format(time.strftime('%mm%dd%YY_%HH%MM%SS',time.localtime()),datetime.now().microsecond)
         tmp={rowName:me.parent.data_sig.copy()}
         me.parent.statusBar().showMessage(rowName)       
         me.sig.emit()

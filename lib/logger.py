@@ -13,7 +13,7 @@ for i in ['lib','lib_widget']:
     sys.path.append(i)
 import mysql
 import random
-
+import gc
 class logger(QtCore.QObject):
     sig=QtCore.pyqtSignal()
 
@@ -108,5 +108,7 @@ class logger(QtCore.QObject):
                 if me.connector.db != None:
                     me.connector.db.commit()
                     print('log saved!')
+                del(me.data)
+                gc.collect()
                 me.data=[]
         me.sig.emit()        

@@ -184,6 +184,7 @@ class control:
 
     def saveSettings(me,self):
         tmp={}
+        tmp['format']=self.main['format']
         tmp['graphSize']=self.main['graphSize']
         tmp['interval']=self.main['interval']
         tmp['line-fmt']=self.main['line-fmt']

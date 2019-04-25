@@ -343,6 +343,8 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             self.main['dbName']=tmp['dbName']
             self.main['dbTable']=tmp['dbTable']
 
+            self.main['format']=tmp['format']
+
             self.main['serverUser']=tmp['serverUser']
             self.main['serverAddress']=tmp['serverAddress']
             self.main['serverPort']=tmp['serverPort']
@@ -359,6 +361,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.serverPort.setValue(self.main['serverPort'])
         self.serverAddress.setText(self.main['serverAddress'])
         self.serverUser.setText(self.main['serverUser'])
+        self.loggerSQLFormat.setCurrentIndex(self.loggerSQLFormat.findText(self.main['format']))
         self.setDefaultTabs()
 
     def setDefaultTabs(self):
@@ -397,6 +400,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     def __init__(self):
         super(self.__class__,self).__init__()
         self.setupUi(self)
+        self.startup=False
         self.main={}
         self.main['tabs']={}        
         self.main['tasks']={}
@@ -411,7 +415,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.main['gridColor']['current']='w'
 
         self.main['config']={}
-        
+        self.main['format']='MySQL' 
         self.main['config']['dir']=os.path.join(os.environ['PWD'],'etc')
         self.main['config']['startup']='hydrogenous.json'
 
@@ -425,6 +429,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
 
         
         self.define_timer()
+        self.startup=True
         self.show()
        
        

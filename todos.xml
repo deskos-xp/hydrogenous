@@ -7,7 +7,7 @@
 	<all_tabs_with_tables>
 		add functionaliy that when user clicks on a cell in any table, the text in table cell is copied to the clipboard automatically
 	</all_tabs_with_tables>
-	<settings_tab status="!done">
+	<settings_tab status="done">
 		add logging group box
 			enable logging check box
 			log data to sqlite or mysql database combobox
@@ -24,4 +24,7 @@
 	<config_options_and_settings_tab status="done">
 		set default tab to display on start
 	</config_options_and_settings_tab>
+	<logging_formats status='pending'>
+		add sqlite3 format for saving data logs to
+	</logging_formats>
 </todos>

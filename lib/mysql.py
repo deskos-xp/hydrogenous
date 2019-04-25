@@ -50,5 +50,6 @@ class handler:
                 )
 
     def disconnect(me):
-        me.datebase.commit()
-        me.database.close()    
+        if me.db != None:
+            me.db.commit()
+            me.db.close()    

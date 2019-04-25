@@ -11,7 +11,7 @@ from PyQt5.QtCore import pyqtSlot
 import sys
 for i in ['lib','lib_widget']:
     sys.path.append(i)
-import mysql
+import mysql,sqlite
 import random
 import gc
 class logger(QtCore.QObject):
@@ -48,11 +48,13 @@ class logger(QtCore.QObject):
         pass
 
     def setConnector(me):
+        msg='log format is "{}"'.format(me.parent.loggerSQLFormat.currentText())
         if me.parent.loggerSQLFormat.currentText() == 'MySQL':
             if me.connector != None:
                 if me.connector.sql_type == 'SQLite3':
-                    #me.connector.disconnect()
-                    pass
+                    if me.connector != None:
+                        me.connector.disconnect()
+                    
             me.connector=mysql.handler(
                 me.parent,
                 host=me.parent.serverAddress.text(),
@@ -66,7 +68,11 @@ class logger(QtCore.QObject):
             if me.connector != None:
                 if me.connector.sql_type == 'MySQL':
                     me.connector.disconnect()
+            me.connector=sqlite.handler(me.parent)
             me.formatString='?'
+            me.parent.statusBar().showMessage(msg)
+
+        print(msg)
 
 
     def start(me):

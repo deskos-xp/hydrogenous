@@ -27,4 +27,7 @@
 	<logging_formats status='pending'>
 		add sqlite3 format for saving data logs to
 	</logging_formats>
+	<performance_useage status='!done'>
+		remove all, or as many as possible, lambda calls from codebase
+	</performance_useage>
 </todos>

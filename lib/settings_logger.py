@@ -83,6 +83,7 @@ class settings_logger(QtCore.QObject):
             self.serverPassword.setEnabled(False)
             self.serverPort.setEnabled(False)
         me.saveInternal()
+
         print('settings changing',self.main['format'])
     def enable_disable(me,self):
         self.main['useLogger']=self.useLogger.isChecked()

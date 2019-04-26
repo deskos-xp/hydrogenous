@@ -2,10 +2,13 @@
 import platform
 import pymysql
 import netifaces as nm
-class handler:
+from PyQt5 import QtCore,QtWidgets
+class handler(QtCore.QObject):
     sql_type='MySQL'
     database=None
     def __init__(me,self,host,user,password,db,port=3306):
+        super(me.__class__,me).__init__(None)
+
         macAddress=nm.ifaddresses(([i for i in nm.interfaces() if i != 'lo'][0]))[nm.AF_PACKET][0]['addr'].replace(':','_')
         hostname=platform.uname().node
         db='{}__{}__{}'.format(db,macAddress,hostname)

@@ -24,10 +24,16 @@
 	<config_options_and_settings_tab status="done">
 		set default tab to display on start
 	</config_options_and_settings_tab>
-	<logging_formats status='pending'>
+
+	<logging_formats status='done'>
 		add sqlite3 format for saving data logs to
 	</logging_formats>
-	<performance_useage status='!done'>
+	
+	<performance_useage status='pending'>
 		remove all, or as many as possible, lambda calls from codebase
 	</performance_useage>
+	
+	<qt_error_thrown_event_handler status="pending">
+		track where errors being trough through event handlers and fix
+	</qt_error_thrown_event_handler> 
 </todos>

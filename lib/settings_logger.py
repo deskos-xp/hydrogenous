@@ -35,7 +35,10 @@ class settings_logger(QtCore.QObject):
         print(clicked)
         fname=QtWidgets.QFileDialog.getSaveFileName(me.parent,caption='Save SQLite3 DB',directory=default_dir,filter='SQLite3 DB (*.db)')
         if fname != ('',''):
-            me.parent.dbName.setText(fname[0])
+            f=fname[0]
+            if os.path.splitext(f)[1] != '.db':
+                f+='.db'
+            me.parent.dbName.setText(f)
             me.saveInternal()
 
     def lineEdits(me,self):
@@ -57,6 +60,10 @@ class settings_logger(QtCore.QObject):
             self.main['serverUser']=self.serverUser.text()
             self.main['serverAddress']=self.serverAddress.text()
             self.main['serverPort']=self.serverPort.value()
+        else:
+            if os.path.splitext(self.main['dbName'])[1] != '.db':
+                self.main['dbName']+='.db'
+                self.dbName.setText(self.main['dbName'])
         self.main['controls'].saveSettings(self)
     
     @pyqtSlot()
@@ -77,6 +84,7 @@ class settings_logger(QtCore.QObject):
                     self.statusBar().showMessage('Invalid DB Table "{}"'.format(self.dbTable.text()))
                     self.dbName.setText('logs')
         elif self.main['format'] == 'SQLite3':
+            self.statusBar().showMessage('')
             self.sqlite3Browse.setEnabled(True)
             self.serverAddress.setEnabled(False)
             self.serverUser.setEnabled(False)

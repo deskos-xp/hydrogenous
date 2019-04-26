@@ -48,14 +48,15 @@ class logger(QtCore.QObject):
         pass
 
     def setConnector(me):
+        me.connector_thread=QtCore.QThread()
         msg='log format is "{}"'.format(me.parent.loggerSQLFormat.currentText())
         if me.parent.loggerSQLFormat.currentText() == 'MySQL':
             if me.connector != None:
                 if me.connector.sql_type == 'SQLite3':
                     if me.connector != None:
                         me.connector.disconnect()
-                    
-            me.connector=mysql.handler(
+    
+                me.connector=mysql.handler(
                 me.parent,
                 host=me.parent.serverAddress.text(),
                 port=me.parent.serverPort.value(),
@@ -63,12 +64,20 @@ class logger(QtCore.QObject):
                 db=me.parent.dbName.text(),
                 password=me.parent.serverPassword.text()
                 )
+            me.connector.moveToThread(me.connector_thread)
             me.formatString='%s'
         elif me.parent.loggerSQLFormat.currentText() == 'SQLite3':
             if me.connector != None:
                 if me.connector.sql_type == 'MySQL':
                     me.connector.disconnect()
+            f=me.parent.dbName.text() 
+            if os.path.splitext(f)[1] != '.db':
+                f+='.db'
+            me.parent.dbName.setText(f)
+
             me.connector=sqlite.handler(me.parent)
+            me.connector.moveToThread(me.connector_thread)
+            me.connector.mkDb()
             me.formatString='?'
             me.parent.statusBar().showMessage(msg)
 
@@ -97,11 +106,14 @@ class logger(QtCore.QObject):
                 del(tmp)
                 me.sig.emit()
 
-                sql='insert {1} (id,data) values({0},{0})'.format(me.formatString,me.table)
+                sql='insert into {1}(id,data) values({0},{0})'.format(me.formatString,me.table)
                 try:
-                    if me.connector.db.open == True:
-                        me.connector.cursor.execute(sql,(rowName,jsonData))
-                        me.connector.db.commit()
+                    if me.connector.sql_type == 'MySQL':
+                        if me.connector.db.open:
+                            me.connector.cursor.execute(sql,(rowName,jsonData))
+                            me.connector.db.commit()
+                    if me.connector.sql_type == 'SQLite3':
+                        me.connector.queData(sql,rowName,jsonData)
                 except Exception as e:
                     print(e) 
                 print(rowName)

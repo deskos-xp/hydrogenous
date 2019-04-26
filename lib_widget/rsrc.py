@@ -13,6 +13,9 @@ class Ui_rsrc(object):
     def setupUi(self, rsrc):
         rsrc.setObjectName("rsrc")
         rsrc.resize(777, 600)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("usr/share/hydrogenous/icons/app.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        rsrc.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(rsrc)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)

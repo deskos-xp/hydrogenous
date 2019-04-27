@@ -29,6 +29,9 @@ class convertFromHurry:
             return 0
 
 class taskProxyFilter(QtCore.QSortFilterProxyModel):
+    def mousePressEvent(self,event):
+        print(event)
+
     def headerData(self, section, orientation, role):
         # if display role of vertical headers
         if orientation == QtCore.Qt.Vertical and role == QtCore.Qt.DisplayRole:

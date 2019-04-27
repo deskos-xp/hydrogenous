@@ -98,6 +98,10 @@ class control:
         self.actionQuit.triggered.connect(lambda: me.quit(self))
         self.tasks.clicked.connect(lambda sig: me.tasks_clicked(self,sig))        
 
+    def lateLoad(me,self):
+        self.tasks.clicked.connect(lambda sig: me.tasks_clicked(self,sig))        
+        self.deselect_all.clicked.connect(lambda: me.clear(self,self.tasks))
+
     def buttons(me,self):
         self.intervalSet.clicked.connect(lambda sig: me.saveInterval(self,sig))
         self.setGraphSize.clicked.connect(lambda: me.saveGraphSize(self))
@@ -107,6 +111,7 @@ class control:
         self.deselect_all.clicked.connect(lambda: me.clear(self,self.tasks))
 
     def tasks_clicked(me,self,sig):
+        #print(sig)
         skipNext=False
         '''
         for i in range(1,count):
@@ -122,7 +127,18 @@ class control:
             obj=self.sender()
             row=sig.row()
             col=1
-            self.selected_pid=sig.sibling(row,col).data() 
+            
+            '''
+            columns=self.main['tasks']['model'].columnCount()
+            rowData=' | '.join([str(sig.sibling(sig.row(),i).data()) for i in range(columns)])
+            self.statusBar().showMessage('"{}" copied to clipboard'.format(rowData))
+            '''
+            self.selected_pid=sig.sibling(row,col).data()
+            '''
+            cb=QtWidgets.QApplication.clipboard()
+            cb.clear(mode=cb.Clipboard)
+            cb.setText(rowData,mode=cb.Clipboard)
+            '''
             w=self.main['tasks']['model'].item(row,1)
             if w != None:
                 ind=self.main['tasks']['proxy'].mapFromSource(w.index())

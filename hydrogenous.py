@@ -18,7 +18,37 @@ from libproxyfilter import taskProxyFilter
 import gateway_info_tab,disk_info_tab
 import logger,settings_logger
 from PyQt5.QtCore import pyqtSlot
+class TableView(QtWidgets.QTableView):
+    def __init__(self,WINDOW, *args, **kwargs):
+        QtWidgets.QTableView.__init__(self, *args, **kwargs)
+        #self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        #self.ScrollHint(QtWidgets.QAbstractItemView.EnsureVisible)
+        self.WINDOW=WINDOW
 
+    def clipboard(self,mode,sig):
+        rowData=''
+        if mode == 'left':
+            columns=self.model().columnCount()
+            rowData=' | '.join([str(sig.sibling(sig.row(),i).data()) for i in range(columns)])
+        elif mode == 'right':
+            rowData=str(sig.data())
+        cb=QtWidgets.QApplication.clipboard()
+        cb.clear(mode=cb.Clipboard)
+        cb.setText(rowData,mode=cb.Clipboard)
+        self.WINDOW.statusBar().showMessage('"{}" copied to clipboard'.format(rowData))
+        
+        #print(mode,sig.data())
+
+    def mousePressEvent(self,event):
+        pos=(event.pos().x(),event.pos().y())
+        index=self.indexAt(event.pos())
+
+        if event.button() == QtCore.Qt.RightButton:
+            self.clipboard('right',index)
+        if event.button() == QtCore.Qt.LeftButton:
+            self.clipboard('left',index)
+        self.clicked.emit(index)
+    
 class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     safemode_used=False
     whoami=os.environ['USER']
@@ -200,19 +230,25 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.main['tabs']['network_info']['gateway_obj']=gateway_info_tab.grapher('gateways',self.main,self)
         self.main['tabs']['network_info']['gateway_obj'].moveToThread(self.main['tabs']['network_info']['gateway'])
         self.main['tabs']['network_info']['gateway'].start()
-    
-    def tasks_tab_handler(self):
+
         currentTab=self.tabWidget.tabText(self.tabWidget.currentIndex())
         print(currentTab,0)
+
+    
+
+    def tasks_tab_handler(self):        
         self.main['collector']={}
         self.main['collector']['data']=[] 
         self.main['collector']['thread']=QtCore.QThread()      
-
+        
         self.main['collector']['thread_obj']=threaded_tasks.threaded_tasks('collector',self.main,self)
         self.main['collector']['thread_obj'].sig.connect(self.update_data_internal)
         self.main['collector']['thread_obj'].moveToThread(self.main['collector']['thread'])
-
-        print(currentTab,1)
+        
+        #print(currentTab,1)
+        self.tasks=TableView(self)
+        self.gridLayout_44.addWidget(self.tasks,0,0,1,1)
+        self.main['controls'].lateLoad(self)
         #when adding more columns update this to update columns headers
         labels=['Task','PID','User','CPU %','RAM Bytes']
         self.main['tasks']['model']=QtGui.QStandardItemModel(0,len(labels))

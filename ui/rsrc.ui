@@ -25,7 +25,7 @@
     <item row="1" column="2">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>5</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="processing">
        <attribute name="title">
@@ -42,8 +42,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>428</height>
+             <width>735</width>
+             <height>479</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
@@ -142,7 +142,11 @@
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QTableView" name="tasks"/>
+                 <widget class="QTableView" name="tasks">
+                  <property name="selectionBehavior">
+                   <enum>QAbstractItemView::SelectItems</enum>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -181,8 +185,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>98</width>
-                   <height>28</height>
+                   <width>711</width>
+                   <height>428</height>
                   </rect>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_30">
@@ -292,8 +296,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>709</width>
+                     <height>426</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_38">
@@ -376,8 +380,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>98</width>
-                     <height>28</height>
+                     <width>709</width>
+                     <height>426</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_32">

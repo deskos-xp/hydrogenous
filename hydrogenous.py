@@ -18,6 +18,9 @@ from libproxyfilter import taskProxyFilter
 import gateway_info_tab,disk_info_tab
 import logger,settings_logger
 from PyQt5.QtCore import pyqtSlot
+from tracemalloc import Filter
+import tracemalloc
+tracemalloc.start(10)
 class TableView(QtWidgets.QTableView):
     def __init__(self,WINDOW, *args, **kwargs):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
@@ -269,8 +272,44 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.data_sig=sig
         self.tasks_update(sig)
 
+    def collect_stats(self,filtered=True):
+        #need to iterate through data_sig in lib threaded tasks recursively and what is not a dict do a del() before adding new data and gc.collect() 
+        if filtered == True:
+            if 'old' not in dir(self):
+                self.old=tracemalloc.take_snapshot()
+            snapshot=tracemalloc.take_snapshot()
+            filters = [Filter(inclusive=True, filename_pattern="*pslinux*")]    
+            filtered_stats = snapshot.filter_traces(filters).compare_to(self.old.filter_traces(filters), 'traceback')    
+            for stat in filtered_stats[:10]:
+                print('''{}	
+        new KiB {} 
+        total KiB {} 
+        new {} 
+        total memory blocks: '''.format(stat.size_diff/1024, stat.size / 1024, stat.count_diff ,stat.count))        
+    
+                for line in stat.traceback.format():            
+                    print(line)
+            self.old=snapshot
+        else:
+            filters=[]
+            if 'snapshots' not in dir(self):
+                self.snapshots=[]
+            self.snapshots.append(tracemalloc.take_snapshot())        
+            if len(self.snapshots) >= 2: 
+                stats = self.snapshots[-1].filter_traces(filters).compare_to(self.snapshots[-2], 'filename')    
+                for stat in stats[:10]:                
+                    print("""
+{} 
+    new KiB {} 
+    total KiB {} 
+    new {} total memory blocks: """.format(stat.size_diff/1024, stat.size / 1024, stat.count_diff ,stat.count))
+
+                    for line in stat.traceback.format():                    
+                        print(line)
     selected_pid=None
     def tasks_update(self,sig):
+        if self.debug == True:    
+            self.collect_stats()
         sig_temp={}
         for key in sig.keys():
             if key not in ['disk','net','total','sensors']:
@@ -495,6 +534,7 @@ def setFusionColor():
 if __name__ == '__main__': 
     a=QtWidgets.QApplication(sys.argv)
     app=rsrc()
+    app.debug=False
     a.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
     a.setPalette(setFusionColor())
     print(QtWidgets.QStyleFactory.keys())

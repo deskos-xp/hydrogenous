@@ -10,14 +10,47 @@ class control:
         me.actors(self)
         me.buttons(self)
         me.valueChanged(self)
-        me.tab_changed(self)
+        me.parent=self
 
     def tab_changed(me,self):
-        pass
-        #self.tabWidget.currentChanged.connect(lambda sig: me.handle_threads(self,sig))
+        me.stop_all_timers(me.parent)
+        me.start_tab_timer(self,tab=me.parent.tabWidget.tabText(me.parent.tabWidget.currentIndex()))
+        self.tabWidget.currentChanged.connect(me.tabChanged)
+     
+    def tabChanged(me,sig):
+        me.stop_all_timers(me.parent)
+        me.start_tab_timer(me.parent,tab=me.parent.tabWidget.tabText(me.parent.tabWidget.currentIndex()))
     
-    def stop_all_threads(me,self):
-        self.main['disk_timer'].stop()
+    def start_tab_timer(me,self,tab='Processing'):
+        tab=tab.lower()
+        print('currentTab: {}'.format(tab))
+        if 'disk_timer' in self.main.keys():
+            
+            self.main['disk_timer'].stop()
+        for i in self.main['tabs'].keys(): 
+            if type(self.main['tabs'][i]) == type(dict()):
+                for ii in self.main['tabs'][i].keys():
+                    if type(self.main['tabs'][i][ii]) == type(dict()): 
+                        for iii in self.main['tabs'][i][ii].keys():
+                            if type(self.main['tabs'][i][ii][iii]) != type(QtCore.QThread()):
+                                print(self.main['tabs'][i][ii][iii],'obj')
+                                if 'timer' in dir(self.main['tabs'][i][ii][iii]):
+                                    if tab in i:
+                                        self.main['tabs'][i][ii][iii].timer.start(self.main['interval'])
+                    else:
+                        if type(self.main['tabs'][i][ii]) != type(QtCore.QThread()):
+                            if 'timer' in dir(self.main['tabs'][i][ii]):
+                                if tab in i:
+                                    self.main['tabs'][i][ii].timer.start(self.main['interval'])
+            else:
+                if type(self.main['tabs'][i]) != type(QtCore.QThread()):
+                    if 'timer' in dir(self.main['tabs'][i]):
+                        if tab in i:
+                            self.main['tabs'][i].timer.start(self.main['interval'])
+
+    def stop_all_timers(me,self):
+        if 'disk_timer' in self.main.keys():
+            self.main['disk_timer'].stop()
         for i in self.main['tabs'].keys(): 
             if type(self.main['tabs'][i]) == type(dict()):
                 for ii in self.main['tabs'][i].keys():
@@ -45,6 +78,7 @@ class control:
                         except:
                             self.main['tabs'][i].quit()
 
+    def start_all_threads(me,self):
         for i in self.main['tabs'].keys():
             if type(self.main['tabs'][i]) == type(dict()):
                 for x in self.main['tabs'][i].keys():
@@ -78,7 +112,10 @@ class control:
  
     def handle_threads(me,self,sig):
         caller=self.sender()
-        me.stop_all_threads(self)
+        me.stop_all_timers(self)
+        me.start_tab_timer(me.parent,tab=me.parent.tabWidget.tabText(me.parent.tabWidget.currentIndex()))
+
+        #me.start_all_threads(self)
         #tabText=caller.tabText(sig).lower()
         '''
         if tabText in self.main['tabs'].keys():
@@ -101,6 +138,7 @@ class control:
     def lateLoad(me,self):
         self.tasks.clicked.connect(lambda sig: me.tasks_clicked(self,sig))        
         self.deselect_all.clicked.connect(lambda: me.clear(self,self.tasks))
+        me.tab_changed(self)
 
     def buttons(me,self):
         self.intervalSet.clicked.connect(lambda sig: me.saveInterval(self,sig))

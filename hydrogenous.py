@@ -19,6 +19,7 @@ import gateway_info_tab,disk_info_tab
 import logger,settings_logger
 from PyQt5.QtCore import pyqtSlot
 from tracemalloc import Filter
+import gc
 import tracemalloc
 tracemalloc.start(10)
 class TableView(QtWidgets.QTableView):
@@ -152,7 +153,6 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
                     self.main['tabs']['disk'][i][mode]=QtCore.QThread()
                     self.main['tabs']['disk_obj'][i][mode]=disk_graphs.grapher(i,self.main,self,mode)
                     self.main['tabs']['disk_obj'][i][mode].moveToThread(self.main['tabs']['disk'][i][mode])
-                    #self.main['tabs']['disk'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
                     self.main['tabs']['disk'][i][mode].start()
         if stage1Only == False:
             self.main['tabs']['disk_info']=QtCore.QThread()
@@ -166,13 +166,11 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             self.main['tabs']['sensors']['battery']=QtCore.QThread()
             self.main['tabs']['sensors']['battery_obj']=sensors_tab_battery.grapher('battery',self.main,self)
             self.main['tabs']['sensors']['battery_obj'].moveToThread(self.main['tabs']['sensors']['battery'])
-            #self.main['tabs']['sensors']['battery'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['sensors']['battery'].start()
 
             self.main['tabs']['sensors']['temperatures']=QtCore.QThread()
             self.main['tabs']['sensors']['temperatures_obj']=sensors_tab_temperatures.grapher('temperatures',self.main,self)
             self.main['tabs']['sensors']['temperatures_obj'].moveToThread(self.main['tabs']['sensors']['temperatures'])
-            #self.main['tabs']['sensors']['temperatures'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['sensors']['temperatures'].start()
 
     def processing_tab_handler(self,index):
@@ -180,21 +178,14 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.main['tabs']['processing']['cpu']=QtCore.QThread()
         self.main['tabs']['processing']['cpu_obj']=processing_graphs.grapher('cpu',self.main,self)
         self.main['tabs']['processing']['cpu_obj'].moveToThread(self.main['tabs']['processing']['cpu'])
-        #self.main['tabs']['processing']['cpu'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
         self.main['tabs']['processing']['ram_percent']=QtCore.QThread()
         self.main['tabs']['processing']['ram_percent_obj']=processing_graphs.grapher('ram_percent',self.main,self)
         self.main['tabs']['processing']['ram_percent_obj'].moveToThread(self.main['tabs']['processing']['ram_percent']) 
 
-        #self.main['tabs']['processing']['ram_percent']=processing_graphs.grapher('ram_percent',self.main,self)
-        #self.main['tabs']['processing']['ram_percent'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
-
         self.main['tabs']['processing']['swap_percent']=QtCore.QThread()
         self.main['tabs']['processing']['swap_percent_obj']=processing_graphs.grapher('swap_percent',self.main,self)
         self.main['tabs']['processing']['swap_percent_obj'].moveToThread(self.main['tabs']['processing']['swap_percent'])
-        
-        #self.main['tabs']['processing']['swap_percent']=processing_graphs.grapher('swap_percent',self.main,self)
-        #self.main['tabs']['processing']['swap_percent'].sig.connect(lambda: QtWidgets.QApplication.processEvents())
 
         self.main['tabs']['processing']['swap_percent'].start()
         self.main['tabs']['processing']['ram_percent'].start()
@@ -215,8 +206,6 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
                 self.main['tabs']['network'][i][mode]=QtCore.QThread()
                 self.main['tabs']['network_obj'][i][mode]=network_graphs.grapher(i,self.main,self,mode)
                 self.main['tabs']['network_obj'][i][mode].moveToThread(self.main['tabs']['network'][i][mode])
-                #self.main['tabs']['network'][i][mode].sig.connect(lambda: QtWidgets.QApplication.processEvents())
-
 
                 self.main['tabs']['network'][i][mode].start()
 
@@ -225,7 +214,6 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             self.main['tabs']['network_info_obj'][i]=network_info_tab.grapher(i,self.main,self)
             self.main['tabs']['network_info_obj'][i].moveToThread(self.main['tabs']['network_info'][i])
 
-            #self.main['tabs']['network_info'][i].sig.connect(lambda: QtWidgets.QApplication.processEvents())
             self.main['tabs']['network_info'][i].start()
 
         self.main['tabs']['network_info']['gateway_setup']=False
@@ -256,7 +244,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         labels=['Task','PID','User','CPU %','RAM Bytes']
         self.main['tasks']['model']=QtGui.QStandardItemModel(0,len(labels))
         self.main['tasks']['proxy']=taskProxyFilter(self)
-        #QtCore.QSortFilterProxyModel(self)
+
         self.main['tasks']['proxy'].setSourceModel(self.main['tasks']['model'])
         self.main['tasks']['model'].setHorizontalHeaderLabels(labels)
         self.tasks.setModel(self.main['tasks']['proxy'])
@@ -271,6 +259,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     def update_data_internal(self,sig):    
         self.data_sig=sig
         self.tasks_update(sig)
+        gc.collect()
 
     def collect_stats(self,filtered=True):
         #need to iterate through data_sig in lib threaded tasks recursively and what is not a dict do a del() before adding new data and gc.collect() 
@@ -278,7 +267,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             if 'old' not in dir(self):
                 self.old=tracemalloc.take_snapshot()
             snapshot=tracemalloc.take_snapshot()
-            filters = [Filter(inclusive=True, filename_pattern="*pslinux*")]    
+            filters = [Filter(inclusive=True, filename_pattern="*hydrogenous*")]    
             filtered_stats = snapshot.filter_traces(filters).compare_to(self.old.filter_traces(filters), 'traceback')    
             for stat in filtered_stats[:10]:
                 print('''{}	
@@ -308,6 +297,9 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
                         print(line)
     selected_pid=None
     def tasks_update(self,sig):
+        if self.tabWidget.tabText(self.tabWidget.currentIndex()) != 'Processes':
+            return
+
         if self.debug == True:    
             self.collect_stats()
         sig_temp={}
@@ -329,15 +321,7 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
             if w != None:
                 if w.text() not in sig.keys():
                     self.main['tasks']['model'].removeRow(i)
-
-
-        empty=[
-                    QtGui.QStandardItem(''),
-                    QtGui.QStandardItem(''),
-                    QtGui.QStandardItem(''),
-                    QtGui.QStandardItem(''),
-                    QtGui.QStandardItem(''),
-                ]
+ 
         try:
             #if self.tasks == None:
             self.main['tasks']['model'].setRowCount(len(sig.keys()))

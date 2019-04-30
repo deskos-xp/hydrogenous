@@ -22,6 +22,7 @@ class control:
         me.start_tab_timer(me.parent,tab=me.parent.tabWidget.tabText(me.parent.tabWidget.currentIndex()))
     
     def start_tab_timer(me,self,tab='Processing'):
+        self.main['collector']['thread_obj'].timer.start(self.main['interval'])
         tab=tab.lower()
         print('currentTab: {}'.format(tab))
         if 'disk_timer' in self.main.keys():
@@ -49,6 +50,7 @@ class control:
                             self.main['tabs'][i].timer.start(self.main['interval'])
 
     def stop_all_timers(me,self):
+        self.main['collector']['thread_obj'].timer.stop()
         if 'disk_timer' in self.main.keys():
             self.main['disk_timer'].stop()
         for i in self.main['tabs'].keys(): 
@@ -108,12 +110,13 @@ class control:
         self.logger_handler(reset=True)
         self.main['disk_timer'].start()
         self.main['collector']['thread_obj'].timer.stop()
-        self.main['collector']['thread_obj'].timer.start(self.main['interval'])
+        #self.main['collector']['thread_obj'].timer.start(self.main['interval'])
  
     def handle_threads(me,self,sig):
         caller=self.sender()
         me.stop_all_timers(self)
         me.start_tab_timer(me.parent,tab=me.parent.tabWidget.tabText(me.parent.tabWidget.currentIndex()))
+        self.main['collector']['thread_obj'].timer.start(self.main['interval'])
 
         #me.start_all_threads(self)
         #tabText=caller.tabText(sig).lower()

@@ -21,7 +21,7 @@ from PyQt5.QtCore import pyqtSlot
 from tracemalloc import Filter
 import gc
 import tracemalloc
-tracemalloc.start(10)
+
 class TableView(QtWidgets.QTableView):
     def __init__(self,WINDOW, *args, **kwargs):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
@@ -43,17 +43,23 @@ class TableView(QtWidgets.QTableView):
         
         #print(mode,sig.data())
 
+    def process_context_menu(self,index):
+        pid=index.sibling(index.row(),1).data()
+        print('this is placeholder for process control functionality: {}'.format(pid))
+    
     def mousePressEvent(self,event):
         pos=(event.pos().x(),event.pos().y())
         index=self.indexAt(event.pos())
-
+        
+        if event.button() == QtCore.Qt.MiddleButton:
+            self.clipboard('middle',index)
         if event.button() == QtCore.Qt.RightButton:
-            self.clipboard('right',index)
+            self.process_context_menu(index)
         if event.button() == QtCore.Qt.LeftButton:
             self.clipboard('left',index)
         self.clicked.emit(index)
     
-class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
+class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     safemode_used=False
     whoami=os.environ['USER']
     data={}    
@@ -485,13 +491,11 @@ class rsrc(QtWidgets.QMainWindow,QtCore.QCoreApplication,rsrc.Ui_rsrc):
         self.setWidget_settings()
 
         self.main['logger_settings']=settings_logger.settings_logger(self)
-
         
         self.define_timer()
         self.startup=True
         self.show()
-       
-       
+          
 def setFusionColor():
     #this bit can be found at https://gist.github.com/mstuttgart/37c0e6d8f67a0611674e08294f3daef7
     #it is not mine
@@ -519,6 +523,8 @@ if __name__ == '__main__':
     a=QtWidgets.QApplication(sys.argv)
     app=rsrc()
     app.debug=False
+    if app.debug == True:
+        tracemalloc.start(10)
     a.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
     a.setPalette(setFusionColor())
     print(QtWidgets.QStyleFactory.keys())

@@ -4,7 +4,7 @@
 		[done]disk usage per partition
 		bug testing!
 	</disk_info_tab>
-	<all_tabs_with_tables>
+	<all_tabs_with_tables status="done">
 		add functionaliy that when user clicks on a cell in any table, the text in table cell is copied to the clipboard automatically
 	</all_tabs_with_tables>
 	<settings_tab status="done">
@@ -15,7 +15,7 @@
 			server user lineEdit
 			database name - if not provided pregenerate datebase name as logging-`date`_`time`
 	</settings_tab>
-	<logging_thread status="!done">
+	<logging_thread status="done">
 		stores 500 interval units of data
 		sends 500 interval units of data to server
 		create a status bar message indicating that data has been committed
@@ -29,11 +29,16 @@
 		add sqlite3 format for saving data logs to
 	</logging_formats>
 	
-	<performance_useage status='pending'>
+	<performance_useage status='done'>
 		remove all, or as many as possible, lambda calls from codebase
 	</performance_useage>
 	
-	<qt_error_thrown_event_handler status="pending">
+	<qt_error_thrown_event_handler status="done">
 		track where errors being trough through event handlers and fix
-	</qt_error_thrown_event_handler> 
+	</qt_error_thrown_event_handler>
+	<process_task_changing_context_menu status="pending">
+		create a context menu that is shown when use right clicks a process in the processes tab with options to:
+			renice
+			kill
+	</process_task_changing_context_menu>
 </todos>

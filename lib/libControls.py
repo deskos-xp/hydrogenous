@@ -2,11 +2,11 @@
 
 from PyQt5 import QtWidgets,QtCore,QtGui
 import os,json
+import time
 
-
-
-class control:
+class control(QtCore.QObject):
     def __init__(me,self):
+        super(me.__class__,me).__init__()
         me.actors(self)
         me.buttons(self)
         me.valueChanged(self)
@@ -34,7 +34,7 @@ class control:
                     if type(self.main['tabs'][i][ii]) == type(dict()): 
                         for iii in self.main['tabs'][i][ii].keys():
                             if type(self.main['tabs'][i][ii][iii]) != type(QtCore.QThread()):
-                                print(self.main['tabs'][i][ii][iii],'obj')
+                                #print(self.main['tabs'][i][ii][iii],'obj')
                                 if 'timer' in dir(self.main['tabs'][i][ii][iii]):
                                     if tab in i:
                                         self.main['tabs'][i][ii][iii].timer.start(self.main['interval'])
@@ -59,7 +59,7 @@ class control:
                     if type(self.main['tabs'][i][ii]) == type(dict()): 
                         for iii in self.main['tabs'][i][ii].keys():
                             if type(self.main['tabs'][i][ii][iii]) != type(QtCore.QThread()):
-                                print(self.main['tabs'][i][ii][iii],'obj')
+                                #print(self.main['tabs'][i][ii][iii],'obj')
                                 if 'timer' in dir(self.main['tabs'][i][ii][iii]):
                                     try:
                                         self.main['tabs'][i][ii][iii].stop()
@@ -91,7 +91,7 @@ class control:
                                 self.main['tabs'][i][x].wait()
                                 self.main['tabs'][i][x].start()
                             else:
-                                print(i,x)
+                                #print(i,x)
                                 for z in self.main['tabs'][i][x].keys():
                                     self.main['tabs'][i][x][z].quit()
                                     self.main['tabs'][i][x][z].wait()
@@ -131,12 +131,23 @@ class control:
         '''
         #me.saveSettings(self)
 
+    @QtCore.pyqtSlot()
+    def preQuit_calls(me):
+        secs=2
+        msg='user called quit...sleeping for {}s while threads quit.'.format(secs)
+        print(msg)
+        time.sleep(secs)
+
+
     def quit(me,self):
         QtWidgets.QApplication.quit()
-
+        
     def actors(me,self):
         self.actionQuit.triggered.connect(lambda: me.quit(self))
         self.tasks.clicked.connect(lambda sig: me.tasks_clicked(self,sig))        
+        #self.aboutToQuit.connect(me.preQuit_calls)
+        #QtWidgets.QApplication.aboutToQuit.connect(me.preQuit_calls)
+        QtCore.QCoreApplication.instance().aboutToQuit.connect(me.preQuit_calls)
 
     def lateLoad(me,self):
         self.tasks.clicked.connect(lambda sig: me.tasks_clicked(self,sig))        

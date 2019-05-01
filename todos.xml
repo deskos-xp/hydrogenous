@@ -41,4 +41,7 @@
 			renice
 			kill
 	</process_task_changing_context_menu>
+	<process_search_functionality status='pending'>
+		add a subtab to processes tab to search for a specific process and display its data+actions to perform
+	</process_search_functionality>
 </todos>

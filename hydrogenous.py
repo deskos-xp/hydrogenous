@@ -21,6 +21,7 @@ from PyQt5.QtCore import pyqtSlot
 from tracemalloc import Filter
 import gc
 import tracemalloc
+import tasks_search
 
 class TableView(QtWidgets.QTableView):
     def __init__(self,WINDOW, *args, **kwargs):
@@ -45,6 +46,11 @@ class TableView(QtWidgets.QTableView):
 
     def process_context_menu(self,index):
         pid=index.sibling(index.row(),1).data()
+        self.WINDOW.process_search.setText(str(pid))
+        self.WINDOW.searchOption_pid.setChecked(True)
+        for i in range(self.WINDOW.tabWidget_4.count()):
+            if self.WINDOW.tabWidget_4.tabText(i) == 'Search':
+                self.WINDOW.tabWidget_4.setCurrentIndex(i)
         print('this is placeholder for process control functionality: {}'.format(pid))
     
     def mousePressEvent(self,event):
@@ -78,6 +84,14 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
         self.disk_timer()
         self.sensors_tab_handler(tabText)
         self.logger_handler()
+        self.tasks_search_handler()
+
+    def tasks_search_handler(self):
+        self.main['tasks_search_thread']=QtCore.QThread()
+        self.main['tasks_search_obj']=tasks_search.threaded_search(self)
+        self.main['tasks_search_obj'].moveToThread(self.main['tasks_search_thread'])
+        self.main['tasks_search_thread'].start()
+        self.main['tasks_search_obj'].start()
 
     def logger_handler(self,reset=False):
         self.logger_groupbox.setEnabled(self.useLogger.isChecked())
@@ -231,8 +245,6 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
         currentTab=self.tabWidget.tabText(self.tabWidget.currentIndex())
         print(currentTab,0)
 
-    
-
     def tasks_tab_handler(self):        
         self.main['collector']={}
         self.main['collector']['data']=[] 
@@ -241,18 +253,21 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
         self.main['collector']['thread_obj']=threaded_tasks.threaded_tasks('collector',self.main,self)
         self.main['collector']['thread_obj'].sig.connect(self.update_data_internal)
         self.main['collector']['thread_obj'].moveToThread(self.main['collector']['thread'])
-        
+        self.main['tasks_search']={} 
         #print(currentTab,1)
         self.tasks=TableView(self)
+        self.discovered_tasks=TableView(self)
         self.gridLayout_44.addWidget(self.tasks,0,0,1,1)
+        #add discovered tasks on search tab
+        self.gridLayout_36.addWidget(self.discovered_tasks,0,0,1,1)
         self.main['controls'].lateLoad(self)
         #when adding more columns update this to update columns headers
-        labels=['Task','PID','User','CPU %','RAM Bytes']
-        self.main['tasks']['model']=QtGui.QStandardItemModel(0,len(labels))
+        self.main['tasks']['labels']=['Task','PID','User','CPU %','RAM Bytes']
+        self.main['tasks']['model']=QtGui.QStandardItemModel(0,len(self.main['tasks']['labels']))
         self.main['tasks']['proxy']=taskProxyFilter(self)
 
         self.main['tasks']['proxy'].setSourceModel(self.main['tasks']['model'])
-        self.main['tasks']['model'].setHorizontalHeaderLabels(labels)
+        self.main['tasks']['model'].setHorizontalHeaderLabels(self.main['tasks']['labels'])
         self.tasks.setModel(self.main['tasks']['proxy'])
         self.tasks.setColumnWidth(0,250)
         self.tasks.setAutoScroll(False)
@@ -261,10 +276,16 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
         self.tasks.setEditTriggers(QtWidgets.QTableView.NoEditTriggers)
         self.tasks.sortByColumn(3,1)
         self.main['collector']['thread'].start()
+        
+        self.main['tasks_search']['model']=QtGui.QStandardItemModel(0,len(self.main['tasks']['labels']))
+        self.main['tasks_search']['proxy']=taskProxyFilter(self)
+        self.main['tasks_search']['proxy'].setSourceModel(self.main['tasks_search']['model'])
+        self.main['tasks_search']['model'].setHorizontalHeaderLabels(self.main['tasks']['labels'])
 
     def update_data_internal(self,sig):    
         self.data_sig=sig
         self.tasks_update(sig)
+        #self.tasks_search_update()
         gc.collect()
 
     def collect_stats(self,filtered=True):
@@ -302,9 +323,10 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
                     for line in stat.traceback.format():                    
                         print(line)
     selected_pid=None
+
     def tasks_update(self,sig):
         if self.tabWidget.tabText(self.tabWidget.currentIndex()) != 'Processes':
-            return
+            return None
 
         if self.debug == True:    
             self.collect_stats()
@@ -313,13 +335,15 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
             if key not in ['disk','net','total','sensors']:
                 sig_temp[key]=sig[key]
         sig=sig_temp
-            
+        del(sig_temp)            
         #been hunting a arithmetic based logical error for 2 days now, found the issue. man, pixies would complain over starting
         #the counting of salt grains with one, when it was zero. LMAO!
     
         order=self.tasks.horizontalHeader().sortIndicatorOrder()
         sortedBy=self.tasks.horizontalHeader().sortIndicatorSection()
         self.tasks.sortByColumn(sortedBy,order)
+        del(order)
+        del(sortedBy)
 
         count=len(sig.keys())
         for i in range(0,count):
@@ -360,10 +384,10 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
                             self.main['tasks']['model'].removeRow(r)
                             #print(w)
                             self.main['tasks']['model'].insertRow(r,columns)
-    
+                            del(r)
                     #update rows
                 #QtWidgets.QApplication.processEvents() 
-           
+                 
            
             count=len(sig.keys())
             for i in range(0,count):
@@ -371,7 +395,8 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
                 if w != None:
                     if w.text() not in sig.keys():
                         self.main['tasks']['model'].removeRow(i)
-
+                del(w)
+            del(count)
         except:
             print('lets try again next cycle: {}'.format(sys.exc_info()))
         #print(self.selected_pid)
@@ -391,7 +416,9 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
                             #self.tasks.setCurrentIndex(ind)
                             self.tasks.selectRow(ind.row())
                     except Exception as e:
-                        print(e)
+                        gc.collect()
+                        print(e,'3#')
+                del(w)
         self.tasks.updateEditorData()
         QtWidgets.QApplication.processEvents() 
         

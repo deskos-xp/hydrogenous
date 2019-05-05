@@ -25,8 +25,7 @@ class control(QtCore.QObject):
         self.main['collector']['thread_obj'].timer.start(self.main['interval'])
         tab=tab.lower()
         print('currentTab: {}'.format(tab))
-        if 'disk_timer' in self.main.keys():
-            
+        if 'disk_timer' in self.main.keys(): 
             self.main['disk_timer'].stop()
         for i in self.main['tabs'].keys(): 
             if type(self.main['tabs'][i]) == type(dict()):
@@ -48,6 +47,8 @@ class control(QtCore.QObject):
                     if 'timer' in dir(self.main['tabs'][i]):
                         if tab in i:
                             self.main['tabs'][i].timer.start(self.main['interval'])
+        if tab == 'processes':             
+            self.main['tasks_search_obj'].start()
 
     def stop_all_timers(me,self):
         self.main['collector']['thread_obj'].timer.stop()

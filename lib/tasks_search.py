@@ -1,5 +1,8 @@
 from PyQt5 import QtGui,QtWidgets,QtCore
 import gc
+#import objgraph
+#from pympler.tracker import SummaryTracker
+#tracker = SummaryTracker()
 
 class threaded_search(QtCore.QObject):
     sig=QtCore.pyqtSignal()
@@ -27,6 +30,8 @@ class threaded_search(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def tasks_search_update(me):
+        #tracker.print_diff()
+        #objgraph.show_most_common_types(limit=20)
         self=me.parent 
         #search model for specific process to get item
         #get row num from item to get column items

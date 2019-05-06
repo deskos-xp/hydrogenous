@@ -28,35 +28,54 @@ class TableView(QtWidgets.QTableView):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
         #self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         #self.ScrollHint(QtWidgets.QAbstractItemView.EnsureVisible)
-        self.WINDOW=WINDOW
+        self.WINDOW=WINDOW 
+        self.shifted=False
+    
+    def keyPressEvent(self,event):
+        if event.key() == QtCore.Qt.Key_Control:
+            self.shifted=True
 
+    def keyReleaseEvent(self,event):
+        if event.key() == QtCore.Qt.Key_Control:
+            self.shifted=False
+    
     def clipboard(self,mode,sig):
         rowData=''
         if mode == 'left':
             columns=self.model().columnCount()
-            rowData=' | '.join([str(sig.sibling(sig.row(),i).data()) for i in range(columns)])
+            rowData=[sig.sibling(sig.row(),i).data() for i in range(columns)]
+            if rowData == [None for i in range(columns)]:
+                rowData=False
+            else:
+                rowData=' | '.join([str(i) for i in rowData])
         elif mode == 'right':
-            rowData=str(sig.data())
-        cb=QtWidgets.QApplication.clipboard()
-        cb.clear(mode=cb.Clipboard)
-        cb.setText(rowData,mode=cb.Clipboard)
-        self.WINDOW.statusBar().showMessage('"{}" copied to clipboard'.format(rowData))
-        
-        #print(mode,sig.data())
-
-    def process_context_menu(self,index):
+            if sig.data() == None:
+                rowData=False
+            else:
+                rowData=str(sig.data())
+        if rowData != False:
+            cb=QtWidgets.QApplication.clipboard()
+            cb.clear(mode=cb.Clipboard)
+            cb.setText(rowData,mode=cb.Clipboard)
+            self.WINDOW.statusBar().showMessage('"{}" copied to clipboard'.format(rowData))
+        else:
+            self.WINDOW.statusBar().showMessage('') 
+     
+    def process_context_menu(self,index): 
         pid=index.sibling(index.row(),1).data()
-        self.WINDOW.process_search.setText(str(pid))
-        self.WINDOW.searchOption_pid.setChecked(True)
-        for i in range(self.WINDOW.tabWidget_4.count()):
-            if self.WINDOW.tabWidget_4.tabText(i) == 'Search':
-                self.WINDOW.tabWidget_4.setCurrentIndex(i)
-        print('this is placeholder for process control functionality: {}'.format(pid))
+        if self.shifted == True:
+            self.shifted=False
+            self.WINDOW.process_search.setText(str(pid))
+            self.WINDOW.searchOption_pid.setChecked(True)
+            for i in range(self.WINDOW.tabWidget_4.count()):
+                if self.WINDOW.tabWidget_4.tabText(i) == 'Search':
+                    self.WINDOW.tabWidget_4.setCurrentIndex(i)
+        else:
+            print('this is placeholder for process control functionality for a context menu: {}'.format(pid))
     
-    def mousePressEvent(self,event):
+    def mouseReleaseEvent(self,event):
         pos=(event.pos().x(),event.pos().y())
-        index=self.indexAt(event.pos())
-        
+        index=self.indexAt(event.pos())        
         if event.button() == QtCore.Qt.MiddleButton:
             self.clipboard('middle',index)
         if event.button() == QtCore.Qt.RightButton:
@@ -275,6 +294,7 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
         self.tasks.setWordWrap(False)
         self.tasks.setEditTriggers(QtWidgets.QTableView.NoEditTriggers)
         self.tasks.sortByColumn(3,1)
+        
         self.main['collector']['thread'].start()
         
         self.main['tasks_search']['model']=QtGui.QStandardItemModel(0,len(self.main['tasks']['labels']))

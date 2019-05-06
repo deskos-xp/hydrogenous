@@ -11,6 +11,7 @@ import rsrc,canvas,resource
 import netifaces as ni
 import gc
 from PyQt5.QtCore import pyqtSlot
+import time
 
 class threaded_tasks(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -83,6 +84,8 @@ class threaded_tasks(QtCore.QObject):
         #print(mod['disk']['speed']['sda3'])
         gc.collect()
         me.sig.emit(mod)       
+        if (time.localtime().tm_sec % 5) == 0:
+            self.statusBar().showMessage('')
 
     def tasks_collection(me,self,mod):
         for i in psutil.process_iter():

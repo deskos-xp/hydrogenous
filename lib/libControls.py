@@ -20,7 +20,15 @@ class control(QtCore.QObject):
     def tabChanged(me,sig):
         me.stop_all_timers(me.parent)
         me.start_tab_timer(me.parent,tab=me.parent.tabWidget.tabText(me.parent.tabWidget.currentIndex()))
-    
+        
+        tab=me.parent.tabWidget.tabText(sig)
+        if tab == 'Processes':
+            subTab=me.parent.tabWidget_4.tabText(me.parent.tabWidget_4.currentIndex())
+            if subTab == 'All':
+               me.parent.tasks.setFocus()
+            elif subTab == 'Search':
+                me.parent.discovered_tasks.setFocus()
+
     def start_tab_timer(me,self,tab='Processing'):
         self.main['collector']['thread_obj'].timer.start(self.main['interval'])
         tab=tab.lower()

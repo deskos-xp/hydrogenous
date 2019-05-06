@@ -12,6 +12,7 @@ import canvas2
 import gateways_info
 import netifaces as ni
 from PyQt5.QtCore import pyqtSlot
+import time
 
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -120,6 +121,9 @@ class grapher(QtCore.QObject):
                         me.setupWidget(self)
                     else:
                         me.update_info(self)
+                print(tabText.lower(),time.ctime(),me.name)
+                QtWidgets.QApplication.processEvents()
+
             me.sig.emit()
         else:
             print('missing data key "net"')

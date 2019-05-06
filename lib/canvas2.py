@@ -7,7 +7,7 @@ from PyQt5 import QtCore
 import gc
 import random
 import pyqtgraph as pg
-
+import time
 class PlotCanvas(): 
     axes=None
     finished=QtCore.pyqtSignal()
@@ -36,3 +36,4 @@ class PlotCanvas():
         self.GRAPH.setLimits(xMax=len(data))
         self.GRAPH.setBackground(pg.mkColor(bg)) 
         self.plt.setData(data,pen=pg.mkPen(pg.mkColor(fmt),width=1)) 
+        QtWidgets.QApplication.processEvents() 

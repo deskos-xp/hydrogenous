@@ -11,6 +11,7 @@ import rsrc,canvas,resource
 import canvas2
 import temperature_widget
 from PyQt5.QtCore import pyqtSlot
+import time
 
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
@@ -94,6 +95,9 @@ class grapher(QtCore.QObject):
                 if self.tabWidget.tabText(self.tabWidget.currentIndex()).lower() == 'sensors':
                     if self.sensors_tabs.tabText(self.sensors_tabs.currentIndex()).lower() == 'temperatures':
                         me.update_widget(self)
+                        print(tabText.lower(),time.ctime(),me.name)
+                        QtWidgets.QApplication.processEvents()
+
             else:
                 print('missing data key "temperatures"')
         else:

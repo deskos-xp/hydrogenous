@@ -6,7 +6,7 @@ from hurry.filesize import si,size,iec
 lib=('lib','lib_widget')
 for i in lib:
     sys.path.append(i)
-
+import time
 import rsrc,canvas,resource
 import canvas2
 from PyQt5.QtCore import pyqtSlot
@@ -142,6 +142,9 @@ class grapher(QtCore.QObject):
                     if self.disk_sub.tabText(self.disk_sub.currentIndex()).lower() == 'monitor':
                         me.update_grid(self)
                         #print('disk monitor tab')
+                        print(tabText.lower(),time.ctime(),me.name)
+                        QtWidgets.QApplication.processEvents()
+
             else:
                 print('missing data key "disk"')
             me.sig.emit()

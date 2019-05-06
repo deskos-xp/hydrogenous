@@ -11,7 +11,7 @@ for i in lib:
 import rsrc,canvas,resource
 import canvas2
 from PyQt5.QtCore import pyqtSlot
-
+import time
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
     sig=QtCore.pyqtSignal()
@@ -125,6 +125,7 @@ class grapher(QtCore.QObject):
         me.data=me.data[buffer_end:]
 
     def update_grid(me,self):
+        
         if me.old != me.data:  
             #was me.graph.plot
             me.tool.Plot(
@@ -141,7 +142,7 @@ class grapher(QtCore.QObject):
             print('data for "{}" has not changed... not painting new plot'.format(me.name))
         me.old=me.data
         me.sig.emit()
-        
+                
     def update_titles(me,self):
         if me.name in ['ram_percent','swap_percent']:
             if me.name == 'ram_percent':
@@ -179,6 +180,8 @@ class grapher(QtCore.QObject):
             me.update_titles(self)
             if tabText.lower() == 'processing':
                 me.update_grid(self)
+                print(tabText.lower(),time.ctime(),me.name)
+                QtWidgets.QApplication.processEvents()
             me.sig.emit()
         else:
             print('missing data key "total"')

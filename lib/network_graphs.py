@@ -10,7 +10,7 @@ for i in lib:
 import rsrc,canvas,resource
 import canvas2
 from PyQt5.QtCore import pyqtSlot
-
+import time
 class grapher(QtCore.QObject):
     #anything that updates the GUI should go in here so define_timer() can be called to run the timers
     sig=QtCore.pyqtSignal()
@@ -132,6 +132,8 @@ class grapher(QtCore.QObject):
             if tabText.lower() == 'network':
                 if self.net_sub.tabText(self.net_sub.currentIndex()).lower() == 'monitor':
                     me.update_grid(self)
+                    print(tabText.lower(),time.ctime(),me.name)
+                    QtWidgets.QApplication.processEvents()
             me.sig.emit()
         else:
             print('missing data key "net"')

@@ -136,7 +136,6 @@ class grapher(QtCore.QObject):
             bg=me.main['facecolor']['current'],
             ylabel='% Used',
             xlabel='Interval',
-            ylim=100,
             )
         else:
             print('data for "{}" has not changed... not painting new plot'.format(me.name))

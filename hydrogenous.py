@@ -245,8 +245,8 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
                 self.main['tabs']['network'][i][mode]=QtCore.QThread()
                 self.main['tabs']['network_obj'][i][mode]=network_graphs.grapher(i,self.main,self,mode)
                 self.main['tabs']['network_obj'][i][mode].moveToThread(self.main['tabs']['network'][i][mode])
-
                 self.main['tabs']['network'][i][mode].start()
+                self.main['tabs']['network_obj'][i][mode].start()
 
         for i in psutil.net_if_addrs().keys():
             self.main['tabs']['network_info'][i]=QtCore.QThread()
@@ -303,6 +303,8 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
         self.main['tasks_search']['model'].setHorizontalHeaderLabels(self.main['tasks']['labels'])
 
     def update_data_internal(self,sig):    
+        print('update_data_internal()')
+        self.repaint()
         self.data_sig=sig
         self.tasks_update(sig)
         #self.tasks_search_update()

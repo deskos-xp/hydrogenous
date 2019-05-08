@@ -65,27 +65,30 @@ class threaded_tasks(QtCore.QObject):
 
     @pyqtSlot()
     def updateData(me,k=None,noStatPrint=False): 
-        self=me.parent
-        k=me.name
+        try:
+            self=me.parent
+            k=me.name
 
-        mod={}
-        cmd=None
-                
-        mod=me.tasks_collection(self,mod)
-        me.upd8.emit()
-        mod=me.net_collection(self,mod)
-        me.upd8.emit()
-        mod=me.disk_collection(self,mod)
-        me.upd8.emit()
-        mod=me.sensors_collection(self,mod)
-        me.upd8.emit()
-        mod=me.gateway_info(self,mod)
-        me.upd8.emit()
-        #print(mod['disk']['speed']['sda3'])
-        gc.collect()
-        me.sig.emit(mod)       
-        if (time.localtime().tm_sec % 5) == 0:
-            self.statusBar().showMessage('')
+            mod={}
+            cmd=None
+                    
+            mod=me.tasks_collection(self,mod)
+            me.upd8.emit()
+            mod=me.net_collection(self,mod)
+            me.upd8.emit()
+            mod=me.disk_collection(self,mod)
+            me.upd8.emit()
+            mod=me.sensors_collection(self,mod)
+            me.upd8.emit()
+            mod=me.gateway_info(self,mod)
+            me.upd8.emit()
+            #print(mod['disk']['speed']['sda3'])
+            gc.collect()
+            me.sig.emit(mod)       
+            if (time.localtime().tm_sec % 5) == 0:
+                self.statusBar().showMessage('')
+        except:
+            print('something went wrong... let\' try another cycle')
 
     def tasks_collection(me,self,mod):
         for i in psutil.process_iter():

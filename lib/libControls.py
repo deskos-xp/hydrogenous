@@ -28,6 +28,16 @@ class control(QtCore.QObject):
                me.parent.tasks.setFocus()
             elif subTab == 'Search':
                 me.parent.discovered_tasks.setFocus()
+        elif tab == 'Processing':
+            me.parent.processing.setFocus()
+        elif tab == 'Disk':
+            me.parent.disk_sub.setFocus()
+        elif tab == 'Network':
+            me.parent.net_sub.setFocus()
+        elif tab == 'Sensors':
+            me.parent.sensors_tabs.setFocus()
+        elif tab == 'Settings':
+            me.parent.interval.setFocus()
 
     def start_tab_timer(me,self,tab='Processing'):
         self.main['collector']['thread_obj'].timer.start(self.main['interval'])
@@ -170,6 +180,7 @@ class control(QtCore.QObject):
         self.setLineColor.clicked.connect(lambda: me.saveLineColor(self))
         
         self.deselect_all.clicked.connect(lambda: me.clear(self,self.tasks))
+        #self.disable_scroll_network_mon.toggled.connect(lambda sig: self.scrollArea_2.scrollBar)
 
     def tasks_clicked(me,self,sig):
         #print(sig)

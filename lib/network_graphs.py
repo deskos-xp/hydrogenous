@@ -27,8 +27,7 @@ class grapher(QtCore.QObject):
         #work this data into network tab thread
         me.timer.timeout.connect(me.updateData)
         me.data=[0 for i in range(me.main['graphSize'])]
-        me.old=me.data
-        me.ylimit=1024
+        me.old=me.data 
         me.tool=canvas2.PlotCanvas(
                 data=me.data,
                 title='{} - {}'.format(me.name.upper(),mode),
@@ -36,11 +35,9 @@ class grapher(QtCore.QObject):
                 glen=me.main['graphSize'],
                 bg=me.main['facecolor']['current'],
                 ylabel='Speed (Bps)',
-                ylim=1024
+                xlabel="Interval"
                 )
         me.graph=me.tool.graph
-
-        ylimit=sorted(me.data)[-1]
         '''
         me.graph=canvas.PlotCanvas(
                 data=me.data,
@@ -54,7 +51,7 @@ class grapher(QtCore.QObject):
                 )
         '''
         me.gridWidget(parent)
-        me.run()
+        #me.run()
 
     def gridWidget(me,self):
         currentRows=self.net.rowCount()
@@ -93,23 +90,28 @@ class grapher(QtCore.QObject):
         #print(me.data,me.name,me.mode)
 
     def update_grid(me,self):
+        '''
         if len(me.data) < self.main['graphSize']:
             tmp=[0 for i in range(self.main['graphSize']-len(me.data))]
             tmp.extend(me.data)
             me.data=tmp
-
+        '''
+        
         if me.old != me.data:
+            '''
             ylimit=sorted(me.data)[-1]
+            
             if me.ylimit != ylimit:
                 ylimit=me.ylimit
+            '''
             me.tool.Plot(
             data=me.data,
             title='{} - {}'.format(''.join(me.name.upper()),me.mode),
             fmt=me.main['line-fmt']['current'],
             glen=me.main['graphSize'],
             bg=me.main['facecolor']['current'],
-            ylim=ylimit,
             ylabel='Speed (Bps)',
+            xlabel='Interval'
             )
         else:
             print('data for "{}" has not changed... not painting new plot'.format(me.name))

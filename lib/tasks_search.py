@@ -3,7 +3,7 @@ import gc
 #import objgraph
 #from pympler.tracker import SummaryTracker
 #tracker = SummaryTracker()
-
+import psutil
 class threaded_search(QtCore.QObject):
     sig=QtCore.pyqtSignal()
     sigUpd8=QtCore.pyqtSignal()   
@@ -70,7 +70,17 @@ class threaded_search(QtCore.QObject):
                     if init[0] != False:
                         self.main['tasks_search']['model'].removeRow(init[1])
                     self.main['tasks_search']['model'].insertRow(init[1],r)
-                    del(r) 
+                    del(r)
+        count=self.main['tasks_search']['model'].rowCount()
+        for pid_num in range(count):
+            w=self.main['tasks_search']['model'].item(pid_num,1) 
+            if w != None:
+                PID=int(w.text())
+                try:
+                    psutil.Process(PID)
+                except Exception as e:
+                    print(e)
+                    self.main['tasks_search']['model'].removeRow(pid_num)
         gc.collect() 
         
     def tasks_search_init(me,self):

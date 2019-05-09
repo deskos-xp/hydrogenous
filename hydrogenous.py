@@ -44,12 +44,21 @@ class TableView(QtWidgets.QTableView):
     def clipboard(self,mode,sig):
         rowData=''
         if mode == 'left':
-            columns=self.model().columnCount()
-            rowData=[sig.sibling(sig.row(),i).data() for i in range(columns)]
-            if rowData == [None for i in range(columns)]:
-                rowData=False
+            if self.shifted == True:
+                pid=sig.sibling(sig.row(),1).data()
+                self.shifted=False
+                self.WINDOW.process_search.setText(str(pid))
+                self.WINDOW.searchOption_pid.setChecked(True)
+                for i in range(self.WINDOW.tabWidget_4.count()):
+                    if self.WINDOW.tabWidget_4.tabText(i) == 'Search':
+                        self.WINDOW.tabWidget_4.setCurrentIndex(i)
             else:
-                rowData=' | '.join([str(i) for i in rowData])
+                columns=self.model().columnCount()
+                rowData=[sig.sibling(sig.row(),i).data() for i in range(columns)]
+                if rowData == [None for i in range(columns)]:
+                    rowData=False
+                else:
+                    rowData=' | '.join([str(i) for i in rowData])
         elif mode == 'right':
             if sig.data() == None:
                 rowData=False
@@ -65,6 +74,7 @@ class TableView(QtWidgets.QTableView):
      
     def process_context_menu(self,index,pos): 
         pid=index.sibling(index.row(),1).data()
+        '''
         if self.shifted == True:
             self.shifted=False
             self.WINDOW.process_search.setText(str(pid))
@@ -73,10 +83,11 @@ class TableView(QtWidgets.QTableView):
                 if self.WINDOW.tabWidget_4.tabText(i) == 'Search':
                     self.WINDOW.tabWidget_4.setCurrentIndex(i)
         else:
-            if pid != None:
-                #pos=QtCore.QPoint(pos[0],pos[1])
-                self.customContextMenuRequested.emit(event.pos())
-                print('this is placeholder for process control functionality for a context menu: {}'.format(pid)) 
+        '''
+        if pid != None:
+            #pos=QtCore.QPoint(pos[0],pos[1])
+            self.customContextMenuRequested.emit(event.pos())
+            print('this is placeholder for process control functionality for a context menu: {}'.format(pid)) 
     
     def mouseReleaseEvent(self,event):
         pos=(event.pos().x(),event.pos().y())

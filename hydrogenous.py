@@ -22,6 +22,7 @@ from tracemalloc import Filter
 import gc
 import tracemalloc
 import tasks_search
+import time
 
 class TableView(QtWidgets.QTableView):
     def __init__(self,WINDOW, *args, **kwargs):
@@ -407,9 +408,19 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
     selected_pid=None
 
     def tasks_update(self,sig):
+        
         if self.tabWidget.tabText(self.tabWidget.currentIndex()) != 'Processes':
             return None
-
+        else:
+            print(
+                self.tabWidget.tabText(
+                    self.tabWidget.currentIndex()
+                ),
+                time.ctime(),
+                self.tabWidget_4.tabText(
+                    self.tabWidget_4.currentIndex()
+                )
+            )
         if self.debug == True:    
             self.collect_stats()
         sig_temp={}
@@ -613,7 +624,7 @@ def setFusionColor():
     dark_palette.setColor(QPalette.WindowText, Qt.white)
     dark_palette.setColor(QPalette.Base, QColor(25, 25, 25))
     dark_palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-    dark_palette.setColor(QPalette.ToolTipBase, Qt.white)
+    dark_palette.setColor(QPalette.ToolTipBase, Qt.black)
     dark_palette.setColor(QPalette.ToolTipText, Qt.white)
     dark_palette.setColor(QPalette.Text, Qt.white)
     dark_palette.setColor(QPalette.Button, QColor(53, 53, 53))

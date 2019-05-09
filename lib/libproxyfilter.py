@@ -56,10 +56,16 @@ class taskProxyFilter(QtCore.QSortFilterProxyModel):
             if left.column() == 3 and right.column() == 3:
                 return leftData < rightData
 
-            if left.column() == 4 and right.column() == 4:
-                a=convertFromHurry()
-                l=a.stringToInt(str(leftData),system=hurry.filesize.iec)
-                r=a.stringToInt(str(rightData),system=hurry.filesize.iec)
+            if left.column() in [4,5] and right.column() in [4,5]:
+                if type(leftData) == type(int()) and type(rightData) == type(int()):
+                    return leftData < rightData
+                if ('-' not in leftData or '-' not in rightData) or ('-' not in leftData and '-' not in rightData):
+                    a=convertFromHurry()
+                    l=a.stringToInt(str(leftData),system=hurry.filesize.iec)
+                    r=a.stringToInt(str(rightData),system=hurry.filesize.iec)
+                else:
+                    l=float(leftData)
+                    r=float(rightData)
                 return l < r
                 
         else:

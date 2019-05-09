@@ -342,7 +342,7 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
         self.gridLayout_36.addWidget(self.discovered_tasks,0,0,1,1)
         self.main['controls'].lateLoad(self)
         #when adding more columns update this to update columns headers
-        self.main['tasks']['labels']=['Task','PID','User','CPU %','RAM Bytes']
+        self.main['tasks']['labels']=['Task','PID','User','CPU %','RAM Bytes','Nice']
         self.main['tasks']['model']=QtGui.QStandardItemModel(0,len(self.main['tasks']['labels']))
         self.main['tasks']['proxy']=taskProxyFilter(self)
 
@@ -458,11 +458,13 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
                             QtGui.QStandardItem(sig[i]['user']),
                             QtGui.QStandardItem(sig[i]['cpu']),
                             QtGui.QStandardItem(),
+                            QtGui.QStandardItem(),
                             ]
 
                 columns[1].setData(int(i),QtCore.Qt.DisplayRole)
                 columns[3].setData(float(sig[i]['cpu']),QtCore.Qt.DisplayRole)
                 columns[4].setData(sig[i]['ram'],QtCore.Qt.DisplayRole)
+                columns[5].setData(sig[i]['nice'],QtCore.Qt.DisplayRole)
                 #columns[4].setText(hurry.filesize.size(sig[i]['ram']))
                 if w == []:
                     #find the next empty line 

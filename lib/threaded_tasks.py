@@ -103,6 +103,7 @@ class threaded_tasks(QtCore.QObject):
                                 'user':i.username(),
                                 'cpu':float(round(i.cpu_percent()/psutil.cpu_count(),2)),
                                 'ram':size(i.memory_info().rss,system=iec),
+                                'nice':i.nice()
                             }
             
         mod['total']={

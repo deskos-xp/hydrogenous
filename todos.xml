@@ -38,10 +38,17 @@
 	</qt_error_thrown_event_handler>
 	<process_task_changing_context_menu status="pending">
 		create a context menu that is shown when use right clicks a process in the processes tab with options to:
-			renice
-			kill
+			<kill status="done">
+				kill
+			</kill>
+			<renice status="pending">
+				renice
+			</renice>
 	</process_task_changing_context_menu>
 	<process_search_functionality status='pending'>
 		add a subtab to processes tab to search for a specific process and display its data+actions to perform
 	</process_search_functionality>
+	<nice_val_to_tasks status="done">
+		add nice val to tasks list for each process
+	</nice_val_to_tasks>
 </todos>

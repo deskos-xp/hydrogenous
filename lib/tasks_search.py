@@ -6,12 +6,14 @@ import gc
 
 class threaded_search(QtCore.QObject):
     sig=QtCore.pyqtSignal()
-        
+    sigUpd8=QtCore.pyqtSignal()   
     def __init__(me,self):
         super(me.__class__,me).__init__()
         me.parent=self
         me.timer=QtCore.QTimer()
-        
+
+        #me.sigUpd8.connect(me.tasks_search_update)
+
         me.tasks_search_init(self)
         me.timer.timeout.connect(me.tasks_search_update)
         #me.timer.start(self.main['interval'])

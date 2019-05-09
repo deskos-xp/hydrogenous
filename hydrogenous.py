@@ -29,8 +29,10 @@ class TableView(QtWidgets.QTableView):
         #self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         #self.ScrollHint(QtWidgets.QAbstractItemView.EnsureVisible)
         self.WINDOW=WINDOW 
-        self.shifted=False
-    
+        self.shifted=False 
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)    
+        self.customContextMenuRequested.connect(self.showMenu)
+        
     def keyPressEvent(self,event):
         if event.key() == QtCore.Qt.Key_Control:
             self.shifted=True
@@ -61,7 +63,7 @@ class TableView(QtWidgets.QTableView):
         else:
             self.WINDOW.statusBar().showMessage('') 
      
-    def process_context_menu(self,index): 
+    def process_context_menu(self,index,pos): 
         pid=index.sibling(index.row(),1).data()
         if self.shifted == True:
             self.shifted=False
@@ -71,7 +73,10 @@ class TableView(QtWidgets.QTableView):
                 if self.WINDOW.tabWidget_4.tabText(i) == 'Search':
                     self.WINDOW.tabWidget_4.setCurrentIndex(i)
         else:
-            print('this is placeholder for process control functionality for a context menu: {}'.format(pid))
+            if pid != None:
+                #pos=QtCore.QPoint(pos[0],pos[1])
+                self.customContextMenuRequested.emit(event.pos())
+                print('this is placeholder for process control functionality for a context menu: {}'.format(pid)) 
     
     def mouseReleaseEvent(self,event):
         pos=(event.pos().x(),event.pos().y())
@@ -79,11 +84,55 @@ class TableView(QtWidgets.QTableView):
         if event.button() == QtCore.Qt.MiddleButton:
             self.clipboard('middle',index)
         if event.button() == QtCore.Qt.RightButton:
-            self.process_context_menu(index)
+            self.process_context_menu(index,pos,event)
         if event.button() == QtCore.Qt.LeftButton:
             self.clipboard('left',index)
         self.clicked.emit(index)
-    
+
+    def showMenu(self,pos):
+        menu=QtWidgets.QMenu('Process Controls')
+        signals={
+            'SIGHUP':psutil.signal.SIGHUP,
+            'SIGINT':psutil.signal.SIGINT,
+            'SIGQUIT':psutil.signal.SIGQUIT,
+            'SIGILL':psutil.signal.SIGILL,
+            'SIGTRAP':psutil.signal.SIGTRAP,
+            'SIGABRT':psutil.signal.SIGABRT,
+            'SIGIOT':psutil.signal.SIGIOT,
+            'SIGBUS':psutil.signal.SIGBUS,
+            'SIGKILL':psutil.signal.SIGKILL,
+            'SIGUSR1':psutil.signal.SIGUSR1,
+            'SIGSEGV':psutil.signal.SIGSEGV,
+            'SIGUSR2':psutil.signal.SIGUSR2,
+            'SIGPIPE':psutil.signal.SIGPIPE,
+            'SIGALRM':psutil.signal.SIGALRM,
+            'SIGTERM':psutil.signal.SIGTERM,
+            'SIGCHLD':psutil.signal.SIGCHLD,
+            'SIGCONT':psutil.signal.SIGCONT,
+            'SIGSTOP':psutil.signal.SIGSTOP,
+            'SIGTTIN':psutil.signal.SIGTTIN,
+            'SIGTTOU':psutil.signal.SIGTTOU
+        }
+        actions={}
+        for k in signals.keys():
+            actions[k]=QtWidgets.QAction(k)
+            actions[k].triggered.connect(lambda BOOL,k=k: self.sendSignal(signals[k],pos))
+            menu.addAction(actions[k])        
+        menu.exec_(QtGui.QCursor().pos())       
+
+    def sendSignal(self,signal,pos): 
+        obj=self.indexAt(pos)
+        pid=obj.sibling(obj.row(),1).data()
+        if pid != None:
+            try:
+                pid=int(pid)
+                proc=psutil.Process(pid)
+                proc.send_signal(signal)
+                self.WINDOW.main['tasks_search_obj'].tasks_search_update()
+            except Exception as e:
+                self.WINDOW.statusBar().showMessage(str(e))
+                print(e)
+        
 class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     safemode_used=False
     whoami=os.environ['USER']

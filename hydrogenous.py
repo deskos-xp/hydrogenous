@@ -23,7 +23,7 @@ import gc
 import tracemalloc
 import tasks_search
 import time
-
+import renice
 class TableView(QtWidgets.QTableView):
     def __init__(self,WINDOW, *args, **kwargs):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
@@ -123,13 +123,19 @@ class TableView(QtWidgets.QTableView):
             'SIGCONT':psutil.signal.SIGCONT,
             'SIGSTOP':psutil.signal.SIGSTOP,
             'SIGTTIN':psutil.signal.SIGTTIN,
-            'SIGTTOU':psutil.signal.SIGTTOU
+            'SIGTTOU':psutil.signal.SIGTTOU,
+            'Re-Nice':'RENICE'
         }
         actions={}
         for k in signals.keys():
-            actions[k]=QtWidgets.QAction(k)
-            actions[k].triggered.connect(lambda BOOL,k=k: self.sendSignal(signals[k],pos))
-            menu.addAction(actions[k])        
+            if k != 'Re-Nice':
+                actions[k]=QtWidgets.QAction(k)
+                actions[k].triggered.connect(lambda BOOL,k=k: self.sendSignal(signals[k],pos))
+                menu.addAction(actions[k])        
+            else:
+                actions[k]=QtWidgets.QAction(k)
+                actions[k].triggered.connect(lambda BOOL,k=k: self.reniceTool(signals[k],pos))
+                menu.addAction(actions[k])
         menu.exec_(QtGui.QCursor().pos())       
 
     def sendSignal(self,signal,pos): 
@@ -141,10 +147,47 @@ class TableView(QtWidgets.QTableView):
                 proc=psutil.Process(pid)
                 proc.send_signal(signal)
                 self.WINDOW.main['tasks_search_obj'].tasks_search_update()
+            except psutil.AccessDenied as e:
+                self.WINDOW.main['controls'].getPass(
+                    self.WINDOW,
+                    self.WINDOW.main['controls'].failCount,
+                    mode='send_sig',
+                    signal=signal,
+                    pid=pid
+                    )
             except Exception as e:
                 self.WINDOW.statusBar().showMessage(str(e))
                 print(e)
-        
+
+    def reniceTool(self,signal,pos):
+        obj=self.indexAt(pos)
+        pid=obj.sibling(obj.row(),1).data()
+        if pid != None:
+            try:
+                pid=int(pid)
+                proc=psutil.Process(pid)
+                print('placeholder for renice functionality {}'.format(proc.nice()))
+                self.WINDOW.main['renice_obj'].pid.setValue(pid)
+                self.WINDOW.main['renice_obj'].nice.setValue(proc.nice())
+                self.WINDOW.main['renice_obj'].name.setText('[{}]-[{}]'.format(proc.name(),proc.cmdline()))
+                reniceTab=self.find_renice_tab()
+                if reniceTab != None:
+                    self.WINDOW.tabWidget_4.setCurrentIndex(reniceTab)
+                else:
+                    print('invalid tab: {}'.format('?'))
+
+                self.WINDOW.main['tasks_search_obj'].tasks_search_update()
+            except Exception as e:
+                print(e)
+
+    def find_renice_tab(self,tabText='Re-Nice'):
+        for index in range(self.WINDOW.tabWidget_4.count()):
+            tab=self.WINDOW.tabWidget_4.tabText(index)
+            print(tab)
+            if tabText == tab:
+                return index    
+        return None
+            
 class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,rsrc.Ui_rsrc):
     safemode_used=False
     whoami=os.environ['USER']
@@ -589,6 +632,12 @@ class rsrc(QtWidgets.QMainWindow,QtWidgets.QApplication,QtCore.QCoreApplication,
         self.setupUi(self)
         self.startup=False
         self.main={}
+
+        self.main['renice_wid']=QtWidgets.QWidget(self)
+        self.main['renice_obj']=renice.Ui_renice()
+        self.main['renice_obj'].setupUi(self.main['renice_wid'])
+        self.renice_grid.addWidget(self.main['renice_wid'],0,0,1,1)
+
         self.main['tabs']={}        
         self.main['tasks']={}
         self.main['line-fmt']={}

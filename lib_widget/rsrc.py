@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file './ui/rsrc.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.1
+# Created by: PyQt5 UI code generator 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -179,6 +179,14 @@ class Ui_rsrc(object):
         self.gridLayout_12.addWidget(self.frameControls, 0, 0, 1, 1)
         self.gridLayout_26.addLayout(self.gridLayout_12, 0, 0, 1, 1)
         self.tabWidget_4.addTab(self.search, "")
+        self.renice = QtWidgets.QWidget()
+        self.renice.setObjectName("renice")
+        self.gridLayout_43 = QtWidgets.QGridLayout(self.renice)
+        self.gridLayout_43.setObjectName("gridLayout_43")
+        self.renice_grid = QtWidgets.QGridLayout()
+        self.renice_grid.setObjectName("renice_grid")
+        self.gridLayout_43.addLayout(self.renice_grid, 0, 0, 1, 1)
+        self.tabWidget_4.addTab(self.renice, "")
         self.gridLayout_16.addWidget(self.tabWidget_4, 0, 0, 1, 1)
         self.gridLayout_17.addLayout(self.gridLayout_16, 0, 0, 1, 1)
         self.tabWidget.addTab(self.processes, "")
@@ -268,7 +276,7 @@ class Ui_rsrc(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 987, 426))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout_38 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
         self.gridLayout_38.setObjectName("gridLayout_38")
@@ -474,7 +482,7 @@ class Ui_rsrc(object):
         self.menubar.addAction(self.menu_File.menuAction())
 
         self.retranslateUi(rsrc)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(1)
         self.tabWidget_4.setCurrentIndex(0)
         self.disk_sub.setCurrentIndex(0)
         self.net_sub.setCurrentIndex(1)
@@ -498,6 +506,7 @@ class Ui_rsrc(object):
         self.searchExact.setText(_translate("rsrc", "Search Exact"))
         self.searchFuzzy.setText(_translate("rsrc", "Search Fuzzy"))
         self.tabWidget_4.setTabText(self.tabWidget_4.indexOf(self.search), _translate("rsrc", "Search"))
+        self.tabWidget_4.setTabText(self.tabWidget_4.indexOf(self.renice), _translate("rsrc", "Re-Nice"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.processes), _translate("rsrc", "Processes"))
         self.disk_sub.setTabText(self.disk_sub.indexOf(self.info), _translate("rsrc", "Info."))
         self.disk_sub.setTabText(self.disk_sub.indexOf(self.monitor), _translate("rsrc", "Monitor"))

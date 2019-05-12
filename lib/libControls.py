@@ -3,14 +3,42 @@
 from PyQt5 import QtWidgets,QtCore,QtGui
 import os,json
 import time
-
+import psutil
+import subprocess as sp
+import sudoBox
 class control(QtCore.QObject):
     def __init__(me,self):
         super(me.__class__,me).__init__()
+        me.parent=self
         me.actors(self)
         me.buttons(self)
         me.valueChanged(self)
-        me.parent=self
+        me.spinBoxes(self)
+
+
+    def spinBoxes(me,self):
+        spins=[
+            [
+                self.main['renice_obj'].pid,
+                me.valueChange_spin
+            ],
+            [
+                self.main['renice_obj'].nice,
+                me.valueChange_spin
+            ],
+        ]
+        for s in spins:
+            s[0].valueChanged.connect(lambda sig,value=s[0]:s[1](sig,value))
+
+    def valueChange_spin(self,sig,value):
+        if value.objectName() == 'pid':
+            try:
+                proc=psutil.Process(value.value())
+                self.parent.main['renice_obj'].name.setText('[{}]-[{}]'.format(proc.name(),proc.cmdline()))
+                self.parent.main['renice_obj'].nice.setValue(proc.nice())
+            except Exception as e:
+                proc=0
+                print(e)
 
     def tab_changed(me,self):
         me.stop_all_timers(me.parent)
@@ -180,8 +208,66 @@ class control(QtCore.QObject):
         self.setLineColor.clicked.connect(lambda: me.saveLineColor(self))
         
         self.deselect_all.clicked.connect(lambda: me.clear(self,self.tasks))
-        #self.disable_scroll_network_mon.toggled.connect(lambda sig: self.scrollArea_2.scrollBar)
+        self.main['renice_obj'].renice_button.clicked.connect(lambda: me.renice(self))
 
+    failCount=3
+    def getPass(me,self,attempts_left,mode,signal=None,pid=None):
+        def getPass_passwd(me,obj,dialog,parent,self,mode,signal=None,pid=None):
+            if pid == None:
+                pid=parent.pid.value()
+            nice=parent.nice.value()
+            passwd=obj.passwd.text()
+            cmd=""
+            if mode == 'renice':
+                cmd=" printf '%s' {2} | sudo -k -S renice {0} {1}".format(nice,pid,passwd)
+            if mode == 'send_sig':
+                cmd=" printf '%s' {2} | sudo -k -S kill -{0} {1}".format(signal,pid,passwd)
+            proc=sp.Popen(cmd,shell=True,stdout=sp.PIPE,stderr=sp.PIPE)
+            stdout,err=proc.communicate()
+            if b'[sudo] password for carl: \nsudo: no password was provided\n' in err:
+                self.statusBar().showMessage(err.decode())
+                me.failCount-=1
+                if me.failCount > 0:
+                    me.getPass(self,me.failCount,'renice',signal,pid)
+                else:
+                    msg='Too many failed attempts!'
+                    print(msg)
+                    self.statusBar().showMessage(msg)
+                    me.failCount=3
+            else:
+                self.statusBar().showMessage('Success!')
+                me.failCount=3
+            
+        def getPass_quit(me,obj,dialog):
+            me.failCount=3
+            dialog.close()    
+            dialog.deleteLater()
+            del(dialog)
+            del(obj)
+
+        dialog=QtWidgets.QDialog(self)
+        getPass=sudoBox.Ui_sudoBox()
+        getPass.setupUi(dialog)
+        getPass.message.setText(getPass.message.text().format(attempts_left))
+        getPass.buttonBox.accepted.connect(lambda: getPass_passwd(me,getPass,dialog,self.main['renice_obj'],self,mode=mode,signal=signal,pid=pid))
+        getPass.buttonBox.rejected.connect(lambda: getPass_quit(me,getPass,dialog))
+        dialog.show()        
+
+    def renice(me,self):
+        pid=self.main['renice_obj'].pid.value()
+        nice=self.main['renice_obj'].nice.value()
+        try:
+            proc=psutil.Process(pid)
+            proc.nice(value=nice)
+        except psutil.AccessDenied as e:
+            proc=psutil.Process(pid)
+            me.getPass(self,me.failCount,mode='renice')
+        except Exception as e:
+            msg='Nothing was set: {}'.format(e)
+            print(msg)
+            self.statusBar().showMessage(msg)
+            
+        
     def tasks_clicked(me,self,sig):
         #print(sig)
         skipNext=False
